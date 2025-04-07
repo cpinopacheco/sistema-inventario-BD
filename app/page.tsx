@@ -2,7 +2,16 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import { Plus, Package2, BarChart3, Search, Moon, Sun } from "lucide-react";
+import {
+  Plus,
+  Package2,
+  BarChart3,
+  Search,
+  Moon,
+  Sun,
+  FileDown,
+  Filter,
+} from "lucide-react";
 import ProductList from "@/components/product-list";
 import AddProductForm from "@/components/add-product-form";
 import ProductDetail from "@/components/product-detail";
@@ -20,6 +29,13 @@ import { Loader } from "@/components/ui/loader";
 import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Image from "next/image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+} from "@/components/ui/select";
+import { exportToExcel } from "@/lib/excel-export";
 
 // Umbral para considerar stock bajo
 const LOW_STOCK_THRESHOLD = 10;
@@ -46,6 +62,7 @@ export default function InventorySystem() {
   });
   const [activeTab, setActiveTab] = useState("todos");
   const [isLoadingProductDetail, setIsLoadingProductDetail] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("todas");
 
   const isMobile = useMobile();
   const { theme, setTheme } = useTheme();
@@ -84,8 +101,9 @@ export default function InventorySystem() {
 
   // Cargar productos
   const cargarProductos = async () => {
+    const categoriaParam = selectedCategory !== "todas" ? selectedCategory : "";
     const data = await fetchApi<ProductoConCategoria[]>(
-      `/api/productos?busqueda=${searchTerm}`
+      `/api/productos?busqueda=${searchTerm}&categoria=${categoriaParam}`
     );
     if (data) {
       setProductos(data);
@@ -100,14 +118,14 @@ export default function InventorySystem() {
     }
   };
 
-  // Efecto para recargar productos cuando cambia el término de búsqueda
+  // Efecto para recargar productos cuando cambia el término de búsqueda o la categoría seleccionada
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       cargarProductos();
     }, 300);
 
     return () => clearTimeout(timeoutId);
-  }, [searchTerm]);
+  }, [searchTerm, selectedCategory]);
 
   // Productos con stock bajo
   const lowStockProducts = useMemo(() => {
@@ -361,6 +379,50 @@ export default function InventorySystem() {
     setActiveTab(value);
   };
 
+  // Manejar cambio de categoría
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
+  };
+
+  // Exportar productos a Excel
+  const handleExportToExcel = () => {
+    // Determinar qué productos exportar según la pestaña activa
+    const productsToExport =
+      activeTab === "stock-bajo"
+        ? lowStockProducts.filter(
+            (product) =>
+              product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              product.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+              product.categoria.toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        : sortedProducts;
+
+    // Formatear datos para Excel
+    const formattedData = productsToExport.map((product) => ({
+      Código: product.id,
+      Nombre: product.nombre,
+      Categoría: product.categoria,
+      Cantidad: product.cantidad,
+      Descripción: product.descripcion || "",
+      Estado:
+        product.cantidad > LOW_STOCK_THRESHOLD ? "En Stock" : "Stock Bajo",
+    }));
+
+    // Nombre del archivo
+    const fileName =
+      activeTab === "stock-bajo"
+        ? "productos-stock-bajo"
+        : "productos-inventario";
+
+    // Exportar a Excel
+    exportToExcel(formattedData, fileName);
+
+    showToast(
+      "Exportación exitosa",
+      `Se han exportado ${formattedData.length} productos a Excel.`
+    );
+  };
+
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background">
@@ -375,7 +437,7 @@ export default function InventorySystem() {
             >
               <Image
                 src="/cenpecar-logo.png"
-                alt="Logo del Sistema"
+                alt="Logo Cenpecar"
                 width={60}
                 height={60}
                 className="rounded-md mr-3"
@@ -385,7 +447,7 @@ export default function InventorySystem() {
                   Sistema de Control de Inventario
                 </h1>
                 <p className="text-sm opacity-80">
-                  Gestiona tu inventario de manera eficiente
+                  Centro Nacional de Perfeccionamiento y Capacitación.
                 </p>
               </div>
             </motion.div>
@@ -473,15 +535,56 @@ export default function InventorySystem() {
             </TabsList>
 
             <TabsContent value="todos" className="space-y-4">
-              <div className="relative mb-4">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Buscar productos..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Buscar productos..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+
+                <div className="w-full md:w-64">
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={handleCategoryChange}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <div className="flex items-center gap-2">
+                        <Filter size={14} />
+                        <span>Filtrar por categoría</span>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="bg-background">
+                      <SelectItem value="todas">
+                        Todas las categorías
+                      </SelectItem>
+                      {categorias.map((categoria) => (
+                        <SelectItem
+                          key={categoria.id}
+                          value={categoria.id.toString()}
+                        >
+                          {categoria.nombre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <TooltipSimple text="Exportar a Excel">
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-950"
+                    onClick={handleExportToExcel}
+                    disabled={loading || productos.length === 0}
+                  >
+                    <FileDown size={16} />
+                    <span className="hidden md:inline">Exportar</span>
+                  </Button>
+                </TooltipSimple>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
@@ -498,15 +601,56 @@ export default function InventorySystem() {
             </TabsContent>
 
             <TabsContent value="stock-bajo" className="space-y-4">
-              <div className="relative mb-4">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Buscar productos con stock bajo..."
-                  className="pl-8"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                  <Input
+                    type="text"
+                    placeholder="Buscar productos con stock bajo..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+
+                <div className="w-full md:w-64">
+                  <Select
+                    value={selectedCategory}
+                    onValueChange={handleCategoryChange}
+                  >
+                    <SelectTrigger className="bg-background">
+                      <div className="flex items-center gap-2">
+                        <Filter size={14} />
+                        <span>Filtrar por categoría</span>
+                      </div>
+                    </SelectTrigger>
+                    <SelectContent className="bg-background">
+                      <SelectItem value="todas">
+                        Todas las categorías
+                      </SelectItem>
+                      {categorias.map((categoria) => (
+                        <SelectItem
+                          key={categoria.id}
+                          value={categoria.id.toString()}
+                        >
+                          {categoria.nombre}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <TooltipSimple text="Exportar a Excel">
+                  <Button
+                    variant="outline"
+                    className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-950"
+                    onClick={handleExportToExcel}
+                    disabled={loading || lowStockProducts.length === 0}
+                  >
+                    <FileDown size={16} />
+                    <span className="hidden md:inline">Exportar</span>
+                  </Button>
+                </TooltipSimple>
               </div>
 
               <div className="grid grid-cols-1 gap-4">
