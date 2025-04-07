@@ -179,9 +179,9 @@ export default function ProductList({
                     transition={{ duration: 0.3, delay: index * 0.05 }}
                     className={`cursor-pointer transition-colors ${
                       selectedProductId === product.id
-                        ? "bg-muted/80 dark:bg-gray-700/60"
+                        ? "bg-gray-100 dark:bg-gray-700/60"
                         : ""
-                    } hover:bg-muted/50 dark:hover:bg-gray-700/40`}
+                    } hover:bg-gray-100 dark:hover:bg-gray-700/40`}
                     onClick={(e) => handleSelectProduct(e, product)}
                   >
                     <TableCell className="font-medium">{index + 1}</TableCell>

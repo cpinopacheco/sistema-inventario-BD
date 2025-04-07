@@ -45,6 +45,7 @@ export default function InventorySystem() {
     porCategoria: [],
   });
   const [activeTab, setActiveTab] = useState("todos");
+  const [isLoadingProductDetail, setIsLoadingProductDetail] = useState(false);
 
   const isMobile = useMobile();
   const { theme, setTheme } = useTheme();
@@ -169,19 +170,39 @@ export default function InventorySystem() {
       );
 
       setIsAddingProduct(false);
-      cargarProductos();
+      // Actualizar la lista local sin recargar todos los productos
+      setProductos((prevProductos) => [...prevProductos, data]);
       cargarEstadisticas();
     }
   };
 
   // Seleccionar un producto para ver detalles
   const handleSelectProduct = async (producto) => {
-    // Obtener detalles completos del producto sin recargar la tabla
-    const data = await fetchApi<ProductoConCategoria>(
-      `/api/productos/${producto.id}`
-    );
-    if (data) {
-      setSelectedProduct(data);
+    // CORRECCIÓN CRÍTICA: Evitar recargar la tabla al ver detalles
+    // Primero verificamos si ya tenemos todos los detalles necesarios
+    if (producto && producto.descripcion !== undefined) {
+      // Si ya tenemos todos los datos necesarios, simplemente actualizamos el estado
+      setSelectedProduct(producto);
+      return;
+    }
+
+    // Solo si faltan datos, hacemos una petición específica para ese producto
+    setIsLoadingProductDetail(true);
+    try {
+      const data = await fetchApi<ProductoConCategoria>(
+        `/api/productos/${producto.id}`
+      );
+      if (data) {
+        setSelectedProduct(data);
+
+        // Actualizamos el producto en la lista local para tener datos completos
+        // para futuras selecciones, sin recargar toda la tabla
+        setProductos((prevProductos) =>
+          prevProductos.map((p) => (p.id === data.id ? data : p))
+        );
+      }
+    } finally {
+      setIsLoadingProductDetail(false);
     }
   };
 
@@ -278,7 +299,8 @@ export default function InventorySystem() {
         `La categoría ${data.nombre} ha sido agregada correctamente.`
       );
 
-      cargarCategorias();
+      // Actualizar categorías localmente sin recargar
+      setCategorias((prevCategorias) => [...prevCategorias, data]);
     }
 
     return data;
@@ -306,7 +328,11 @@ export default function InventorySystem() {
         `La categoría ha sido actualizada correctamente.`
       );
 
-      cargarCategorias();
+      // Actualizar categorías localmente sin recargar
+      setCategorias((prevCategorias) =>
+        prevCategorias.map((c) => (c.id === data.id ? data : c))
+      );
+
       // Actualizar los productos localmente para reflejar el cambio de nombre de categoría
       setProductos((prevProductos) =>
         prevProductos.map((p) =>
@@ -359,7 +385,7 @@ export default function InventorySystem() {
                   Sistema de Control de Inventario
                 </h1>
                 <p className="text-sm opacity-80">
-                  Cento Nacional de Perfeccionamiento y Capacitación.
+                  Gestiona tu inventario de manera eficiente
                 </p>
               </div>
             </motion.div>
@@ -370,6 +396,7 @@ export default function InventorySystem() {
                   ? "Cambiar a modo claro"
                   : "Cambiar a modo oscuro"
               }
+              className={theme === "light" ? "bg-white text-black" : ""}
             >
               <Button
                 variant="ghost"
@@ -533,6 +560,7 @@ export default function InventorySystem() {
                   categories={categorias}
                   onAddCategory={handleAddCategory}
                   onEditCategory={handleEditCategory}
+                  isLoading={isLoadingProductDetail}
                 />
               </div>
             </div>
@@ -546,6 +574,7 @@ export default function InventorySystem() {
                 categories={categorias}
                 onAddCategory={handleAddCategory}
                 onEditCategory={handleEditCategory}
+                isLoading={isLoadingProductDetail}
               />
             </div>
           ))}

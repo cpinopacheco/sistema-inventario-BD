@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { X, Save, Trash2, Edit2, Plus } from "lucide-react";
+import { X, Save, Trash2, Edit2, Plus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,6 +40,7 @@ export default function ProductDetail({
   categories,
   onAddCategory,
   onEditCategory,
+  isLoading = false,
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState({
@@ -170,7 +171,7 @@ export default function ProductDetail({
         transition={{ duration: 0.3 }}
         className="bg-background"
       >
-        <Card className="border-[#BFD189] border-2 w-full mx-auto bg-background shadow-lg">
+        <Card className="border-[#BFD189] border-2 w-full mx-auto bg-background shadow-lg dark:border-gray-600">
           <CardHeader className="bg-[#f5f9e8] dark:bg-[#1a2e22] pb-2">
             <div className="flex justify-between items-center">
               <CardTitle className="text-[#013612] dark:text-[#BFD189]">
@@ -185,7 +186,14 @@ export default function ProductDetail({
           </CardHeader>
 
           <CardContent className="pt-4 bg-background">
-            {isEditing ? (
+            {isLoading ? (
+              <div className="flex flex-col items-center justify-center py-8">
+                <Loader2 size={30} className="animate-spin text-primary mb-2" />
+                <p className="text-sm text-gray-500">
+                  Cargando detalles del producto...
+                </p>
+              </div>
+            ) : isEditing ? (
               <div className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name">Nombre del Producto</Label>
@@ -206,7 +214,7 @@ export default function ProductDetail({
                     <SelectTrigger className="bg-background">
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
-                    <SelectContent className="bg-background">
+                    <SelectContent className="bg-background dark:bg-gray-800">
                       {categories.map((category) => (
                         <SelectItem
                           key={category.id}
@@ -324,7 +332,13 @@ export default function ProductDetail({
           </CardContent>
 
           <CardFooter className="flex justify-between border-t pt-4 bg-background">
-            {isEditing ? (
+            {isLoading ? (
+              <div className="w-full flex justify-center">
+                <Button variant="outline" disabled>
+                  Cargando...
+                </Button>
+              </div>
+            ) : isEditing ? (
               <>
                 <TooltipSimple text="Cancelar edición">
                   <Button variant="outline" onClick={handleCancel}>
@@ -370,7 +384,7 @@ export default function ProductDetail({
 
         {/* Dialog para agregar nueva categoría */}
         <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-          <DialogContent className="w-[95%] max-w-md mx-auto bg-background">
+          <DialogContent className="w-[95%] max-w-md mx-auto bg-background dark:border-gray-600">
             <DialogHeader>
               <DialogTitle>Agregar Nueva Categoría</DialogTitle>
             </DialogHeader>
@@ -408,7 +422,7 @@ export default function ProductDetail({
 
         {/* Dialog para editar categoría */}
         <Dialog open={isEditingCategory} onOpenChange={setIsEditingCategory}>
-          <DialogContent className="w-[95%] max-w-md mx-auto bg-background">
+          <DialogContent className="w-[95%] max-w-md mx-auto bg-background dark:border-gray-600">
             <DialogHeader>
               <DialogTitle>Editar Categoría</DialogTitle>
             </DialogHeader>

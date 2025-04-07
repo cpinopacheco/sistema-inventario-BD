@@ -147,7 +147,7 @@ export default function AddProductForm({
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
         transition={{ type: "spring", damping: 20 }}
-        className="bg-background rounded-lg shadow-xl w-full max-w-md border-2 border-[#BFD189] dark:border-[#EABD00]/70"
+        className="bg-background rounded-lg shadow-xl w-full max-w-md border-2 border-[#BFD189] dark:border-gray-600"
       >
         <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
           <h2 className="text-lg font-medium text-[#013612] dark:text-[#BFD189]">
@@ -262,7 +262,7 @@ export default function AddProductForm({
 
         {/* Dialog para agregar nueva categoría */}
         <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
-          <DialogContent className="sm:max-w-[425px] bg-background dark:border-[#EABD00]/70 dark:border-2">
+          <DialogContent className="sm:max-w-[425px] bg-background dark:border-gray-600">
             <DialogHeader>
               <DialogTitle>Agregar Nueva Categoría</DialogTitle>
             </DialogHeader>
