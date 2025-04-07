@@ -63,6 +63,8 @@ export default function InventorySystem() {
   const [activeTab, setActiveTab] = useState("todos");
   const [isLoadingProductDetail, setIsLoadingProductDetail] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<string>("todas");
+  // Agregar después de los otros estados
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
 
   const isMobile = useMobile();
   const { theme, setTheme } = useTheme();
@@ -90,6 +92,16 @@ export default function InventorySystem() {
       }, TOAST_DURATION);
     }
   }, [error]);
+
+  // Agregar después de los otros useEffect
+  useEffect(() => {
+    // Pequeño retraso para asegurar que el DOM esté listo
+    const timer = setTimeout(() => {
+      setIsPageLoaded(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Cargar categorías
   const cargarCategorias = async () => {
@@ -426,276 +438,295 @@ export default function InventorySystem() {
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-background">
-        {/* Header */}
-        <header className="bg-[#013612] dark:bg-[#011a09] text-white p-4 shadow-md">
-          <div className="container mx-auto flex justify-between items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="flex items-center gap-2"
-            >
-              <Image
-                src="/cenpecar-logo.png"
-                alt="Logo Cenpecar"
-                width={60}
-                height={60}
-                className="rounded-md mr-3"
-              />
-              <div>
-                <h1 className="text-xl font-bold">
-                  Sistema de Control de Inventario
-                </h1>
-                <p className="text-sm opacity-80">
-                  Centro Nacional de Perfeccionamiento y Capacitación.
-                </p>
-              </div>
-            </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: isPageLoaded ? 1 : 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          {/* Header */}
+          <header className="bg-[#013612] dark:bg-[#011a09] text-white p-4 shadow-md">
+            <div className="container mx-auto flex justify-between items-center">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex items-center gap-2"
+              >
+                <Image
+                  src="/cenpecar-logo.png"
+                  alt="Logo Cenpecar"
+                  width={60}
+                  height={60}
+                  className="rounded-md mr-3"
+                />
+                <div>
+                  <h1 className="text-xl font-bold">
+                    Sistema de Control de Inventario
+                  </h1>
+                  <p className="text-sm opacity-80">
+                    Centro Nacional de perfeccionamiento y capacitación.
+                  </p>
+                </div>
+              </motion.div>
 
-            <TooltipSimple
-              text={
-                theme === "dark"
-                  ? "Cambiar a modo claro"
-                  : "Cambiar a modo oscuro"
-              }
-              className={theme === "light" ? "bg-white text-black" : ""}
-            >
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleTheme}
-                className="text-white hover:bg-[#01471a] dark:hover:bg-[#012b10]"
+              <TooltipSimple
+                text={
+                  theme === "dark"
+                    ? "Cambiar a modo claro"
+                    : "Cambiar a modo oscuro"
+                }
+                className={theme === "light" ? "bg-white text-black" : ""}
               >
-                {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
-              </Button>
-            </TooltipSimple>
-          </div>
-        </header>
-
-        {/* Main Content */}
-        <main className="container mx-auto p-4 mt-4">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-medium">Productos en Inventario</h2>
-            <TooltipSimple text="Agregar un nuevo producto al inventario">
-              <Button
-                onClick={() => setIsAddingProduct(true)}
-                className="bg-[#EABD00] hover:bg-[#d9ae00] text-[#013612] gap-2"
-                disabled={loading}
-              >
-                <Plus size={16} />
-                Agregar Producto
-              </Button>
-            </TooltipSimple>
-          </div>
-
-          <Tabs
-            defaultValue="todos"
-            value={activeTab}
-            onValueChange={handleTabChange}
-            className="w-full"
-          >
-            <TabsList className="mb-4 bg-muted border border-transparent">
-              <TabsTrigger
-                value="todos"
-                className="data-[state=active]:bg-background data-[state=active]:border-[#EABD00] data-[state=active]:border-b-2 data-[state=active]:font-medium dark:data-[state=active]:text-white"
-              >
-                <Package2 size={16} className="mr-2" />
-                Todos
-              </TabsTrigger>
-              <TabsTrigger
-                value="stock-bajo"
-                className="data-[state=active]:bg-background data-[state=active]:border-[#EABD00] data-[state=active]:border-b-2 data-[state=active]:font-medium dark:data-[state=active]:text-white"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mr-2"
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={toggleTheme}
+                  className="text-white hover:bg-[#01471a] dark:hover:bg-[#012b10]"
                 >
-                  <path d="M16 18V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2z"></path>
-                  <path d="M16 6h2a2 2 0 0 1 2 2v8"></path>
-                  <path d="M12 10v4"></path>
-                  <path d="M12 2v4"></path>
-                </svg>
-                Stock Bajo
-              </TabsTrigger>
-              <TabsTrigger
-                value="estadisticas"
-                className="data-[state=active]:bg-background data-[state=active]:border-[#EABD00] data-[state=active]:border-b-2 data-[state=active]:font-medium dark:data-[state=active]:text-white"
-              >
-                <BarChart3 size={16} className="mr-2" />
-                Estadísticas
-              </TabsTrigger>
-            </TabsList>
+                  {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+                </Button>
+              </TooltipSimple>
+            </div>
+          </header>
 
-            <TabsContent value="todos" className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4 mb-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Buscar productos..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+          {/* Main Content */}
+          <main className="container mx-auto p-4 mt-4">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-medium">Productos en Inventario</h2>
+              <TooltipSimple text="Agregar un nuevo producto al inventario">
+                <Button
+                  onClick={() => setIsAddingProduct(true)}
+                  className="bg-[#EABD00] hover:bg-[#d9ae00] text-[#013612] gap-2"
+                  disabled={loading}
+                >
+                  <Plus size={16} />
+                  Agregar Producto
+                </Button>
+              </TooltipSimple>
+            </div>
+
+            <Tabs
+              defaultValue="todos"
+              value={activeTab}
+              onValueChange={handleTabChange}
+              className="w-full"
+            >
+              <TabsList className="mb-4 bg-muted border border-transparent">
+                <TabsTrigger
+                  value="todos"
+                  className="data-[state=active]:bg-background data-[state=active]:border-[#EABD00] data-[state=active]:border-b-2 data-[state=active]:font-medium dark:data-[state=active]:text-white"
+                >
+                  <Package2 size={16} className="mr-2" />
+                  Todos
+                </TabsTrigger>
+                <TabsTrigger
+                  value="stock-bajo"
+                  className="data-[state=active]:bg-background data-[state=active]:border-[#EABD00] data-[state=active]:border-b-2 data-[state=active]:font-medium dark:data-[state=active]:text-white"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2"
+                  >
+                    <path d="M16 18V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2z"></path>
+                    <path d="M16 6h2a2 2 0 0 1 2 2v8"></path>
+                    <path d="M12 10v4"></path>
+                    <path d="M12 2v4"></path>
+                  </svg>
+                  Stock Bajo
+                </TabsTrigger>
+                <TabsTrigger
+                  value="estadisticas"
+                  className="data-[state=active]:bg-background data-[state=active]:border-[#EABD00] data-[state=active]:border-b-2 data-[state=active]:font-medium dark:data-[state=active]:text-white"
+                >
+                  <BarChart3 size={16} className="mr-2" />
+                  Estadísticas
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="todos" className="space-y-4">
+                <div className="flex flex-col md:flex-row gap-4 mb-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Buscar productos..."
+                      className="pl-8"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="w-full md:w-64">
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={handleCategoryChange}
+                    >
+                      <SelectTrigger className="bg-background">
+                        <div className="flex items-center gap-2">
+                          <Filter size={14} />
+                          <span>Filtrar por categoría</span>
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="bg-background">
+                        <SelectItem value="todas">
+                          Todas las categorías
+                        </SelectItem>
+                        {categorias.map((categoria) => (
+                          <SelectItem
+                            key={categoria.id}
+                            value={categoria.id.toString()}
+                          >
+                            {categoria.nombre}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <TooltipSimple text="Exportar a Excel">
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-950"
+                      onClick={handleExportToExcel}
+                      disabled={loading || productos.length === 0}
+                    >
+                      <FileDown size={16} />
+                      <span className="hidden md:inline">Exportar</span>
+                    </Button>
+                  </TooltipSimple>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <ProductList
+                    products={sortedProducts}
+                    onSelectProduct={handleSelectProduct}
+                    selectedProductId={selectedProduct?.id}
+                    onUpdateQuantity={handleUpdateQuantity}
+                    onRequestSort={requestSort}
+                    sortConfig={sortConfig}
+                    loading={loading}
                   />
                 </div>
+              </TabsContent>
 
-                <div className="w-full md:w-64">
-                  <Select
-                    value={selectedCategory}
-                    onValueChange={handleCategoryChange}
-                  >
-                    <SelectTrigger className="bg-background">
-                      <div className="flex items-center gap-2">
-                        <Filter size={14} />
-                        <span>Filtrar por categoría</span>
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="bg-background">
-                      <SelectItem value="todas">
-                        Todas las categorías
-                      </SelectItem>
-                      {categorias.map((categoria) => (
-                        <SelectItem
-                          key={categoria.id}
-                          value={categoria.id.toString()}
-                        >
-                          {categoria.nombre}
+              <TabsContent value="stock-bajo" className="space-y-4">
+                <div className="flex flex-col md:flex-row gap-4 mb-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
+                    <Input
+                      type="text"
+                      placeholder="Buscar productos con stock bajo..."
+                      className="pl-8"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="w-full md:w-64">
+                    <Select
+                      value={selectedCategory}
+                      onValueChange={handleCategoryChange}
+                    >
+                      <SelectTrigger className="bg-background">
+                        <div className="flex items-center gap-2">
+                          <Filter size={14} />
+                          <span>Filtrar por categoría</span>
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="bg-background">
+                        <SelectItem value="todas">
+                          Todas las categorías
                         </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                        {categorias.map((categoria) => (
+                          <SelectItem
+                            key={categoria.id}
+                            value={categoria.id.toString()}
+                          >
+                            {categoria.nombre}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <TooltipSimple text="Exportar a Excel">
+                    <Button
+                      variant="outline"
+                      className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-950"
+                      onClick={handleExportToExcel}
+                      disabled={loading || lowStockProducts.length === 0}
+                    >
+                      <FileDown size={16} />
+                      <span className="hidden md:inline">Exportar</span>
+                    </Button>
+                  </TooltipSimple>
                 </div>
 
-                <TooltipSimple text="Exportar a Excel">
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-950"
-                    onClick={handleExportToExcel}
-                    disabled={loading || productos.length === 0}
-                  >
-                    <FileDown size={16} />
-                    <span className="hidden md:inline">Exportar</span>
-                  </Button>
-                </TooltipSimple>
-              </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                <ProductList
-                  products={sortedProducts}
-                  onSelectProduct={handleSelectProduct}
-                  selectedProductId={selectedProduct?.id}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onRequestSort={requestSort}
-                  sortConfig={sortConfig}
-                  loading={loading}
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="stock-bajo" className="space-y-4">
-              <div className="flex flex-col md:flex-row gap-4 mb-4">
-                <div className="relative flex-1">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500 dark:text-gray-400" />
-                  <Input
-                    type="text"
-                    placeholder="Buscar productos con stock bajo..."
-                    className="pl-8"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                <div className="grid grid-cols-1 gap-4">
+                  <ProductList
+                    products={lowStockProducts.filter(
+                      (product) =>
+                        product.nombre
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase()) ||
+                        product.id
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase()) ||
+                        product.categoria
+                          .toLowerCase()
+                          .includes(searchTerm.toLowerCase())
+                    )}
+                    onSelectProduct={handleSelectProduct}
+                    selectedProductId={selectedProduct?.id}
+                    onUpdateQuantity={handleUpdateQuantity}
+                    onRequestSort={requestSort}
+                    sortConfig={sortConfig}
+                    isLowStockTab={true}
+                    loading={loading}
                   />
                 </div>
+              </TabsContent>
 
-                <div className="w-full md:w-64">
-                  <Select
-                    value={selectedCategory}
-                    onValueChange={handleCategoryChange}
-                  >
-                    <SelectTrigger className="bg-background">
-                      <div className="flex items-center gap-2">
-                        <Filter size={14} />
-                        <span>Filtrar por categoría</span>
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="bg-background">
-                      <SelectItem value="todas">
-                        Todas las categorías
-                      </SelectItem>
-                      {categorias.map((categoria) => (
-                        <SelectItem
-                          key={categoria.id}
-                          value={categoria.id.toString()}
-                        >
-                          {categoria.nombre}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+              <TabsContent value="estadisticas" className="space-y-4">
+                {loading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader size={30} />
+                    <span className="ml-2">Cargando estadísticas...</span>
+                  </div>
+                ) : (
+                  <StatsCards stats={estadisticas} />
+                )}
+              </TabsContent>
+            </Tabs>
+          </main>
+
+          {/* Product Detail Modal (conditionally rendered as modal on mobile) */}
+          {selectedProduct &&
+            (isMobile ? (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="w-full max-w-md">
+                  <ProductDetail
+                    product={selectedProduct}
+                    onClose={() => setSelectedProduct(null)}
+                    onEdit={handleEditProduct}
+                    onDelete={handleDeleteProduct}
+                    categories={categorias}
+                    onAddCategory={handleAddCategory}
+                    onEditCategory={handleEditCategory}
+                    isLoading={isLoadingProductDetail}
+                  />
                 </div>
-
-                <TooltipSimple text="Exportar a Excel">
-                  <Button
-                    variant="outline"
-                    className="flex items-center gap-2 border-green-600 text-green-600 hover:bg-green-50 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-950"
-                    onClick={handleExportToExcel}
-                    disabled={loading || lowStockProducts.length === 0}
-                  >
-                    <FileDown size={16} />
-                    <span className="hidden md:inline">Exportar</span>
-                  </Button>
-                </TooltipSimple>
               </div>
-
-              <div className="grid grid-cols-1 gap-4">
-                <ProductList
-                  products={lowStockProducts.filter(
-                    (product) =>
-                      product.nombre
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase()) ||
-                      product.id
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase()) ||
-                      product.categoria
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
-                  )}
-                  onSelectProduct={handleSelectProduct}
-                  selectedProductId={selectedProduct?.id}
-                  onUpdateQuantity={handleUpdateQuantity}
-                  onRequestSort={requestSort}
-                  sortConfig={sortConfig}
-                  isLowStockTab={true}
-                  loading={loading}
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="estadisticas" className="space-y-4">
-              {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader size={30} />
-                  <span className="ml-2">Cargando estadísticas...</span>
-                </div>
-              ) : (
-                <StatsCards stats={estadisticas} />
-              )}
-            </TabsContent>
-          </Tabs>
-        </main>
-
-        {/* Product Detail Modal (conditionally rendered as modal on mobile) */}
-        {selectedProduct &&
-          (isMobile ? (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-              <div className="w-full max-w-md">
+            ) : (
+              <div className="fixed bottom-4 right-4 w-80 z-40">
                 <ProductDetail
                   product={selectedProduct}
                   onClose={() => setSelectedProduct(null)}
@@ -707,33 +738,20 @@ export default function InventorySystem() {
                   isLoading={isLoadingProductDetail}
                 />
               </div>
-            </div>
-          ) : (
-            <div className="fixed bottom-4 right-4 w-80 z-40">
-              <ProductDetail
-                product={selectedProduct}
-                onClose={() => setSelectedProduct(null)}
-                onEdit={handleEditProduct}
-                onDelete={handleDeleteProduct}
+            ))}
+
+          {/* Add Product Modal */}
+          {isAddingProduct && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <AddProductForm
+                onAddProduct={handleAddProduct}
+                onCancel={() => setIsAddingProduct(false)}
                 categories={categorias}
                 onAddCategory={handleAddCategory}
-                onEditCategory={handleEditCategory}
-                isLoading={isLoadingProductDetail}
               />
             </div>
-          ))}
-
-        {/* Add Product Modal */}
-        {isAddingProduct && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <AddProductForm
-              onAddProduct={handleAddProduct}
-              onCancel={() => setIsAddingProduct(false)}
-              categories={categorias}
-              onAddCategory={handleAddCategory}
-            />
-          </div>
-        )}
+          )}
+        </motion.div>
 
         <Toaster />
       </div>

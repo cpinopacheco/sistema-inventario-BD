@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { ConfirmDialog } from "@/components/confirm-dialog";
 
 // ProductDetail component shows detailed information about a selected product
 export default function ProductDetail({
@@ -63,6 +64,9 @@ export default function ProductDetail({
     original: "",
     new: "",
   });
+
+  // 2. Agregar estado para el diálogo de confirmación (dentro del componente ProductDetail)
+  const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -165,10 +169,13 @@ export default function ProductDetail({
   return (
     <TooltipProvider>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-        transition={{ duration: 0.3 }}
+        initial={{ opacity: 0, y: 15, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 15, scale: 0.98 }}
+        transition={{
+          duration: 0.4,
+          ease: [0.25, 0.1, 0.25, 1.0],
+        }}
         className="bg-background"
       >
         <Card className="border-[#BFD189] border-2 w-full mx-auto bg-background shadow-lg dark:border-gray-600">
@@ -371,7 +378,7 @@ export default function ProductDetail({
                   <Button
                     variant="outline"
                     className="text-red-600 border-red-200 hover:bg-red-50 dark:text-red-400 dark:border-red-900 dark:hover:bg-red-950"
-                    onClick={() => onDelete(product.id)}
+                    onClick={() => setIsConfirmDeleteOpen(true)}
                   >
                     <Trash2 size={14} className="mr-1" />
                     Eliminar
@@ -462,6 +469,17 @@ export default function ProductDetail({
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        <ConfirmDialog
+          isOpen={isConfirmDeleteOpen}
+          onClose={() => setIsConfirmDeleteOpen(false)}
+          onConfirm={() => onDelete(product.id)}
+          title="Eliminar Producto"
+          description={`¿Estás seguro que deseas eliminar el producto "${product.nombre}"? Esta acción no se puede deshacer.`}
+          confirmText="Eliminar"
+          cancelText="Cancelar"
+          variant="danger"
+        />
       </motion.div>
     </TooltipProvider>
   );

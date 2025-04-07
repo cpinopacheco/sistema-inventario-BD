@@ -112,7 +112,7 @@ export default function ProductList({
 
   return (
     <TooltipProvider>
-      <div className="bg-card rounded-lg shadow-md overflow-hidden">
+      <div className="bg-card rounded-lg shadow-md overflow-hidden flex flex-col h-full">
         <div className="p-4 border-b">
           <h2 className="text-lg font-medium text-[#013612] dark:text-[#BFD189]">
             {isLowStockTab
@@ -125,9 +125,9 @@ export default function ProductList({
           </p>
         </div>
 
-        <div className="overflow-x-auto">
+        <div className="flex-1 overflow-auto">
           <Table>
-            <TableHeader>
+            <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
                 <TableHead className="w-[80px]">#</TableHead>
                 <TableHead
@@ -174,9 +174,13 @@ export default function ProductList({
                 products.map((product, index) => (
                   <motion.tr
                     key={product.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    transition={{
+                      duration: 0.4,
+                      delay: index * 0.03,
+                      ease: [0.25, 0.1, 0.25, 1.0],
+                    }}
                     className={`cursor-pointer transition-colors ${
                       selectedProductId === product.id
                         ? "bg-gray-100 dark:bg-gray-700/60"

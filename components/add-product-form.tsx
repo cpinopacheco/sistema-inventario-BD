@@ -143,10 +143,15 @@ export default function AddProductForm({
   return (
     <TooltipProvider>
       <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.9 }}
-        transition={{ type: "spring", damping: 20 }}
+        initial={{ opacity: 0, scale: 0.95, y: 10 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 10 }}
+        transition={{
+          type: "spring",
+          damping: 25,
+          stiffness: 400,
+          mass: 1,
+        }}
         className="bg-background rounded-lg shadow-xl w-full max-w-md border-2 border-[#BFD189] dark:border-gray-600"
       >
         <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
