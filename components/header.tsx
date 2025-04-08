@@ -66,7 +66,7 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
             </div>
           </>
         ) : (
-          <div className="container mx-auto flex justify-between items-center pb-4">
+          <div className="container mx-auto flex justify-between items-center">
             <div className="flex items-center">
               <Image
                 src={logoUrl || "/cenpecar-logo.png"}
