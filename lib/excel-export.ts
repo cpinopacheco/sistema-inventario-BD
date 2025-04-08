@@ -16,6 +16,17 @@ export function exportToExcel(data: any[], fileName = "export") {
       // Crear una hoja de trabajo
       const worksheet = XLSX.utils.json_to_sheet(data);
 
+      // Ajustar el ancho de las columnas
+      const columnWidths = [
+        { wch: 10 }, // Código
+        { wch: 30 }, // Nombre
+        { wch: 50 }, // Descripción (ahora como segunda columna)
+        { wch: 20 }, // Categoría
+        { wch: 10 }, // Cantidad
+        { wch: 15 }, // Estado
+      ];
+      worksheet["!cols"] = columnWidths;
+
       // Crear un libro de trabajo
       const workbook = XLSX.utils.book_new();
 

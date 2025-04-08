@@ -110,9 +110,17 @@ export default function ProductList({
     onSelectProduct(product);
   };
 
+  // Truncar texto largo
+  const truncateText = (text, maxLength = 50) => {
+    if (!text) return "Sin descripción";
+    return text.length > maxLength
+      ? `${text.substring(0, maxLength)}...`
+      : text;
+  };
+
   return (
     <TooltipProvider>
-      <div className="bg-card rounded-lg shadow-md overflow-hidden flex flex-col h-full">
+      <div className="bg-card rounded-lg shadow-md">
         <div className="p-4 border-b">
           <h2 className="text-lg font-medium text-[#013612] dark:text-[#BFD189]">
             {isLowStockTab
@@ -125,7 +133,7 @@ export default function ProductList({
           </p>
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div>
           <Table>
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
@@ -136,6 +144,7 @@ export default function ProductList({
                 >
                   Nombre {getSortIndicator("nombre")}
                 </TableHead>
+                <TableHead>Descripción</TableHead>
                 <TableHead
                   className="cursor-pointer hover:bg-muted"
                   onClick={() => onRequestSort("categoria")}
@@ -154,7 +163,7 @@ export default function ProductList({
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={6} className="text-center py-8">
                     <div className="flex items-center justify-center gap-2">
                       <Loader />
                       <span>Cargando productos...</span>
@@ -164,7 +173,7 @@ export default function ProductList({
               ) : products.length === 0 ? (
                 <TableRow>
                   <TableCell
-                    colSpan={5}
+                    colSpan={6}
                     className="text-center py-8 text-gray-500 dark:text-gray-400"
                   >
                     No se encontraron productos
@@ -188,12 +197,19 @@ export default function ProductList({
                     } hover:bg-gray-100 dark:hover:bg-gray-700/40`}
                     onClick={(e) => handleSelectProduct(e, product)}
                   >
-                    <TableCell className="font-medium">{index + 1}</TableCell>
+                    <TableCell className="font-medium">{product.id}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Package2 size={16} className="text-gray-400" />
                         {product.nombre}
                       </div>
+                    </TableCell>
+                    <TableCell className="max-w-[200px] truncate">
+                      <TooltipSimple
+                        text={product.descripcion || "Sin descripción"}
+                      >
+                        <span>{truncateText(product.descripcion)}</span>
+                      </TooltipSimple>
                     </TableCell>
                     <TableCell>{product.categoria}</TableCell>
                     <TableCell className="text-center">
