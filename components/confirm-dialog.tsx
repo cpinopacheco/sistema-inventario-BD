@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useMobile } from "@/hooks/use-mobile";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export function ConfirmDialog({
   variant = "danger",
 }: ConfirmDialogProps) {
   const [isAnimating, setIsAnimating] = useState(false);
+  const isMobile = useMobile();
 
   // Manejar la animación al abrir
   useEffect(() => {
@@ -108,15 +110,44 @@ export function ConfirmDialog({
             {description}
           </DialogDescription>
         </DialogHeader>
-        <DialogFooter className="flex sm:justify-center gap-2 pt-4">
-          <Button variant="outline" onClick={onClose}>
-            {cancelText}
-          </Button>
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-            <Button className={colors.button} onClick={handleConfirm}>
-              {confirmText}
-            </Button>
-          </motion.div>
+        <DialogFooter
+          className={`flex ${
+            isMobile ? "flex-col" : "sm:justify-center"
+          } gap-2 pt-4`}
+        >
+          {isMobile ? (
+            <>
+              <motion.div
+                className="w-full"
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <Button
+                  className={`w-full ${colors.button}`}
+                  onClick={handleConfirm}
+                >
+                  {confirmText}
+                </Button>
+              </motion.div>
+              <Button variant="outline" className="w-full" onClick={onClose}>
+                {cancelText}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="outline" onClick={onClose}>
+                {cancelText}
+              </Button>
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+              >
+                <Button className={colors.button} onClick={handleConfirm}>
+                  {confirmText}
+                </Button>
+              </motion.div>
+            </>
+          )}
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -41,7 +41,9 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
                   variant="ghost"
                   size="icon"
                   onClick={toggleTheme}
-                  className="text-white hover:bg-[#01471a] dark:hover:bg-[#012b10]"
+                  className={`text-white hover:bg-[#01471a] dark:hover:bg-[#012b10] ${
+                    theme === "dark" ? "bg-[#012b10]/60" : "bg-[#01471a]/60"
+                  }`}
                 >
                   {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                 </Button>
@@ -49,7 +51,7 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
             </div>
 
             {/* Logo y texto centrados en mobile */}
-            <div className="flex flex-col items-center justify-center pt-4">
+            <div className="flex flex-col items-center justify-center pt-4 pb-4">
               <Image
                 src={logoUrl || "/cenpecar-logo.png"}
                 alt="Logo del Sistema"
@@ -64,7 +66,7 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
             </div>
           </>
         ) : (
-          <div className="container mx-auto flex justify-between items-center">
+          <div className="container mx-auto flex justify-between items-center pb-4">
             <div className="flex items-center">
               <Image
                 src={logoUrl || "/cenpecar-logo.png"}
@@ -91,7 +93,9 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className="text-white hover:bg-[#01471a] dark:hover:bg-[#012b10]"
+                className={`text-white hover:bg-[#01471a] dark:hover:bg-[#012b10] ${
+                  theme === "dark" ? "bg-[#012b10]/60" : "bg-[#01471a]/60"
+                }`}
               >
                 {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
               </Button>

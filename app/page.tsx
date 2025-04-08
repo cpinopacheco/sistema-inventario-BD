@@ -21,6 +21,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { exportToExcel } from "@/lib/excel-export";
 import { Header } from "@/components/header";
 import { CategorySelector } from "@/components/category-selector";
+import { ScrollToTop } from "@/components/scroll-to-top";
 
 // Umbral para considerar stock bajo
 const LOW_STOCK_THRESHOLD = 10;
@@ -658,6 +659,9 @@ export default function InventorySystem() {
             </div>
           )}
         </motion.div>
+
+        {/* Botón Scroll to Top */}
+        <ScrollToTop />
 
         <Toaster />
       </div>
