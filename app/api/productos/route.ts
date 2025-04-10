@@ -84,7 +84,10 @@ export async function POST(request: Request) {
     `);
 
     // Si no hay productos o hay un error al obtener el máximo, comenzamos desde 1
-    const maxId = maxIdResult.rows[0].max_id || 0;
+    const maxId =
+      maxIdResult && maxIdResult.rows && maxIdResult.rows[0]
+        ? maxIdResult.rows[0].max_id || 0
+        : 0;
     const nextId = maxId + 1;
     const id = `P${String(nextId).padStart(3, "0")}`;
 
@@ -93,7 +96,11 @@ export async function POST(request: Request) {
       "SELECT id FROM productos WHERE id = $1",
       [id]
     );
-    if (existingProduct.rowCount > 0) {
+    if (
+      existingProduct &&
+      existingProduct.rowCount &&
+      existingProduct.rowCount > 0
+    ) {
       // Si por alguna razón el ID ya existe, generamos uno con un número más alto
       const safeId = `P${String(nextId + 1).padStart(3, "0")}`;
       console.log(`ID ${id} ya existe, usando ${safeId} en su lugar`);
@@ -119,7 +126,10 @@ export async function POST(request: Request) {
 
       const productoCreado = {
         ...result.rows[0],
-        categoria: categoriaResult.rows[0].nombre,
+        categoria:
+          categoriaResult && categoriaResult.rows && categoriaResult.rows[0]
+            ? categoriaResult.rows[0].nombre
+            : "",
       };
 
       return NextResponse.json(productoCreado, { status: 201 });
@@ -147,7 +157,10 @@ export async function POST(request: Request) {
 
     const productoCreado = {
       ...result.rows[0],
-      categoria: categoriaResult.rows[0].nombre,
+      categoria:
+        categoriaResult && categoriaResult.rows && categoriaResult.rows[0]
+          ? categoriaResult.rows[0].nombre
+          : "",
     };
 
     return NextResponse.json(productoCreado, { status: 201 });
