@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { X, Save, Trash2, Edit2, Plus, Loader2 } from "lucide-react";
+import { X, Save, Trash2, Edit2, Plus, Minus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,6 +31,7 @@ import {
 import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import { StockAdjustmentModal } from "@/components/stock-adjustment-modal";
 
 // ProductDetail component shows detailed information about a selected product
 export default function ProductDetail({
@@ -38,11 +39,24 @@ export default function ProductDetail({
   onClose,
   onEdit,
   onDelete,
+  onUpdateQuantity,
   categories,
   onAddCategory,
   onEditCategory,
   isLoading = false,
 }) {
+  // Verificar que onUpdateQuantity sea una función al cargar el componente
+  useEffect(() => {
+    if (
+      onUpdateQuantity === undefined ||
+      typeof onUpdateQuantity !== "function"
+    ) {
+      console.warn(
+        "ProductDetail: onUpdateQuantity no es una función o no está definida"
+      );
+    }
+  }, [onUpdateQuantity]);
+
   const [isEditing, setIsEditing] = useState(false);
   const [editedProduct, setEditedProduct] = useState({
     id: product.id,
@@ -65,8 +79,12 @@ export default function ProductDetail({
     new: "",
   });
 
-  // 2. Agregar estado para el diálogo de confirmación (dentro del componente ProductDetail)
+  // Confirm delete dialog state
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+
+  // Stock adjustment modal state
+  const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
+  const [isIncrement, setIsIncrement] = useState(true);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -147,6 +165,22 @@ export default function ProductDetail({
     await onEditCategory(categoryToEdit.original, categoryToEdit.new);
     setIsEditingCategory(false);
     setCategoryError("");
+  };
+
+  // Función para abrir el modal de ajuste de stock
+  const handleOpenAdjustmentModal = (increment) => {
+    setIsIncrement(increment);
+    setIsAdjustmentModalOpen(true);
+  };
+
+  // Función para confirmar el ajuste de stock
+  const handleConfirmAdjustment = (cantidad) => {
+    if (typeof onUpdateQuantity === "function") {
+      onUpdateQuantity(product.id, cantidad);
+      setIsAdjustmentModalOpen(false);
+    } else {
+      console.error("onUpdateQuantity no es una función o no está definida");
+    }
   };
 
   const handleSave = () => {
@@ -256,13 +290,34 @@ export default function ProductDetail({
 
                 <div className="space-y-2">
                   <Label htmlFor="quantity">Cantidad</Label>
-                  <Input
-                    id="quantity"
-                    name="quantity"
-                    type="number"
-                    value={editedProduct.quantity}
-                    onChange={handleChange}
-                  />
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 text-sm font-medium">
+                      {product.cantidad}
+                    </div>
+                    <div className="flex gap-1">
+                      <TooltipSimple text="Aumentar cantidad">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-900 dark:hover:bg-green-950"
+                          onClick={() => handleOpenAdjustmentModal(true)}
+                        >
+                          <Plus size={14} />
+                        </Button>
+                      </TooltipSimple>
+                      <TooltipSimple text="Disminuir cantidad">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-8 w-8 text-gray-600 border-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-gray-900"
+                          onClick={() => handleOpenAdjustmentModal(false)}
+                          disabled={product.cantidad <= 0}
+                        >
+                          <Minus size={14} />
+                        </Button>
+                      </TooltipSimple>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -308,7 +363,34 @@ export default function ProductDetail({
                   <div className="text-sm text-gray-500 dark:text-gray-400">
                     Cantidad
                   </div>
-                  <div className="text-sm font-medium">{product.cantidad}</div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm font-medium">
+                      {product.cantidad}
+                    </div>
+                    <div className="flex gap-1">
+                      <TooltipSimple text="Aumentar cantidad">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-900 dark:hover:bg-green-950"
+                          onClick={() => handleOpenAdjustmentModal(true)}
+                        >
+                          <Plus size={12} />
+                        </Button>
+                      </TooltipSimple>
+                      <TooltipSimple text="Disminuir cantidad">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="h-6 w-6 text-gray-600 border-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-gray-900"
+                          onClick={() => handleOpenAdjustmentModal(false)}
+                          disabled={product.cantidad <= 0}
+                        >
+                          <Minus size={12} />
+                        </Button>
+                      </TooltipSimple>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1">
@@ -469,6 +551,16 @@ export default function ProductDetail({
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Modal para ajustar stock */}
+        <StockAdjustmentModal
+          isOpen={isAdjustmentModalOpen}
+          onClose={() => setIsAdjustmentModalOpen(false)}
+          onConfirm={handleConfirmAdjustment}
+          productName={product.nombre}
+          currentStock={product.cantidad}
+          isIncrement={isIncrement}
+        />
 
         <ConfirmDialog
           isOpen={isConfirmDeleteOpen}

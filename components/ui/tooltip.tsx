@@ -28,3 +28,40 @@ const TooltipContent = React.forwardRef<
 TooltipContent.displayName = TooltipPrimitive.Content.displayName;
 
 export { TooltipRoot, TooltipTrigger, TooltipContent, TooltipProvider };
+import {
+  TooltipProvider as TooltipProviderSimple,
+  TooltipRoot as TooltipRootSimple,
+  TooltipTrigger as TooltipTriggerSimple,
+  TooltipContent as TooltipContentSimple,
+} from "@/components/ui/tooltip";
+
+interface TooltipSimpleProps {
+  text: string;
+  children: React.ReactNode;
+  side?: "top" | "right" | "bottom" | "left";
+  align?: "start" | "center" | "end";
+  className?: string;
+}
+
+export function TooltipSimple({
+  text,
+  children,
+  side = "top",
+  align = "center",
+  className = "",
+}: TooltipSimpleProps) {
+  return (
+    <TooltipProviderSimple>
+      <TooltipRootSimple>
+        <TooltipTriggerSimple asChild>{children}</TooltipTriggerSimple>
+        <TooltipContentSimple
+          side={side}
+          align={align}
+          className={`text-xs backdrop-blur-md bg-background/80 border border-border/50 shadow-lg dark:bg-background/60 dark:border-white/10 ${className}`}
+        >
+          {text}
+        </TooltipContentSimple>
+      </TooltipRootSimple>
+    </TooltipProviderSimple>
+  );
+}

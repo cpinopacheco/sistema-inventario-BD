@@ -16,7 +16,7 @@ import type { ProductoConCategoria, Categoria } from "@/types";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Loader } from "@/components/ui/loader";
-import { TooltipSimple } from "@/components/ui/tooltip-simple";
+import { TooltipSimple } from "@/components/ui/tooltip";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { exportToExcel } from "@/lib/excel-export";
 import { Header } from "@/components/header";
@@ -26,7 +26,7 @@ import { ScrollToTop } from "@/components/scroll-to-top";
 // Umbral para considerar stock bajo
 const LOW_STOCK_THRESHOLD = 10;
 // Duración de las notificaciones en milisegundos
-const TOAST_DURATION = 5000;
+const TOAST_DURATION = 4000;
 
 export default function InventorySystem() {
   // Estado para productos y UI
@@ -222,29 +222,42 @@ export default function InventorySystem() {
 
   // Actualizar cantidad de producto
   const handleUpdateQuantity = async (id, cambio) => {
-    const data = await fetchApi(`/api/productos/${id}/cantidad`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cambio }),
-    });
+    console.log(
+      `Actualizando cantidad para producto ${id} con cambio ${cambio}`
+    );
 
-    if (data) {
-      // Actualizar el producto en la lista local sin recargar toda la tabla
-      setProductos((prevProductos) =>
-        prevProductos.map((p) => (p.id === id ? data : p))
-      );
+    try {
+      const data = await fetchApi(`/api/productos/${id}/cantidad`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cambio }),
+      });
 
-      // Si el producto está seleccionado, actualizar también la vista de detalle
-      if (selectedProduct && selectedProduct.id === id) {
-        setSelectedProduct(data);
+      if (data) {
+        // Actualizar el producto en la lista local sin recargar toda la tabla
+        setProductos((prevProductos) =>
+          prevProductos.map((p) => (p.id === id ? data : p))
+        );
+
+        // Si el producto está seleccionado, actualizar también la vista de detalle
+        if (selectedProduct && selectedProduct.id === id) {
+          setSelectedProduct(data);
+        }
+
+        showToast(
+          "Cantidad actualizada",
+          `La cantidad del producto ${data.nombre} ha sido actualizada correctamente.`
+        );
+
+        cargarEstadisticas();
       }
-
+    } catch (error) {
+      console.error("Error al actualizar cantidad:", error);
       showToast(
-        "Cantidad actualizada",
-        `La cantidad del producto ${data.nombre} ha sido actualizada correctamente.`
+        "Error",
+        "No se pudo actualizar la cantidad del producto",
+        "destructive"
       );
-
-      cargarEstadisticas();
     }
   };
 
@@ -625,6 +638,7 @@ export default function InventorySystem() {
                     onClose={() => setSelectedProduct(null)}
                     onEdit={handleEditProduct}
                     onDelete={handleDeleteProduct}
+                    onUpdateQuantity={handleUpdateQuantity}
                     categories={categorias}
                     onAddCategory={handleAddCategory}
                     onEditCategory={handleEditCategory}
@@ -639,6 +653,7 @@ export default function InventorySystem() {
                   onClose={() => setSelectedProduct(null)}
                   onEdit={handleEditProduct}
                   onDelete={handleDeleteProduct}
+                  onUpdateQuantity={handleUpdateQuantity}
                   categories={categorias}
                   onAddCategory={handleAddCategory}
                   onEditCategory={handleEditCategory}
