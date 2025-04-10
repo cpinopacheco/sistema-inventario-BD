@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { X, Save, Trash2, Edit2, Plus, Minus, Loader2 } from "lucide-react";
@@ -31,7 +33,8 @@ import {
 import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/confirm-dialog";
-import { StockAdjustmentModal } from "@/components/stock-adjustment-modal";
+import { StockAdjustmentModal } from "./stock-adjustment-modal";
+import type { ProductDetailProps, EditedProduct, Categoria } from "@/types";
 
 // ProductDetail component shows detailed information about a selected product
 export default function ProductDetail({
@@ -44,7 +47,7 @@ export default function ProductDetail({
   onAddCategory,
   onEditCategory,
   isLoading = false,
-}) {
+}: ProductDetailProps) {
   // Verificar que onUpdateQuantity sea una función al cargar el componente
   useEffect(() => {
     if (
@@ -58,7 +61,7 @@ export default function ProductDetail({
   }, [onUpdateQuantity]);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProduct, setEditedProduct] = useState({
+  const [editedProduct, setEditedProduct] = useState<EditedProduct>({
     id: product.id,
     name: product.nombre,
     quantity: product.cantidad,
@@ -86,7 +89,9 @@ export default function ProductDetail({
   const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
   const [isIncrement, setIsIncrement] = useState(true);
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setEditedProduct({
       ...editedProduct,
@@ -94,7 +99,7 @@ export default function ProductDetail({
     });
   };
 
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: string) => {
     if (value === "nueva") {
       setIsAddingCategory(true);
     } else if (value === "editar") {
@@ -105,7 +110,7 @@ export default function ProductDetail({
       setIsEditingCategory(true);
     } else {
       const selectedCategory = categories.find(
-        (c) => c.id.toString() === value
+        (c: Categoria) => c.id.toString() === value
       );
       setEditedProduct({
         ...editedProduct,
@@ -123,7 +128,7 @@ export default function ProductDetail({
     }
 
     const existingCategory = categories.find(
-      (c) => c.nombre.toLowerCase() === newCategory.toLowerCase()
+      (c: Categoria) => c.nombre.toLowerCase() === newCategory.toLowerCase()
     );
 
     if (existingCategory) {
@@ -152,7 +157,7 @@ export default function ProductDetail({
     }
 
     const existingCategory = categories.find(
-      (c) =>
+      (c: Categoria) =>
         c.nombre.toLowerCase() === categoryToEdit.new.toLowerCase() &&
         c.nombre !== categoryToEdit.original
     );
@@ -168,13 +173,13 @@ export default function ProductDetail({
   };
 
   // Función para abrir el modal de ajuste de stock
-  const handleOpenAdjustmentModal = (increment) => {
+  const handleOpenAdjustmentModal = (increment: boolean) => {
     setIsIncrement(increment);
     setIsAdjustmentModalOpen(true);
   };
 
   // Función para confirmar el ajuste de stock
-  const handleConfirmAdjustment = (cantidad) => {
+  const handleConfirmAdjustment = (cantidad: number) => {
     if (typeof onUpdateQuantity === "function") {
       onUpdateQuantity(product.id, cantidad);
       setIsAdjustmentModalOpen(false);
@@ -256,7 +261,7 @@ export default function ProductDetail({
                       <SelectValue placeholder="Seleccionar categoría" />
                     </SelectTrigger>
                     <SelectContent className="bg-background dark:bg-gray-800">
-                      {categories.map((category) => (
+                      {categories.map((category: Categoria) => (
                         <SelectItem
                           key={category.id}
                           value={category.id.toString()}

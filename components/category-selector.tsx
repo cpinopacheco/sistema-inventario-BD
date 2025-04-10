@@ -7,13 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import type { Categoria } from "@/types";
-
-interface CategorySelectorProps {
-  categories: Categoria[];
-  selectedCategory: string;
-  onCategoryChange: (value: string) => void;
-}
+import type { CategorySelectorProps, Categoria } from "@/types";
 
 export function CategorySelector({
   categories,
@@ -24,7 +18,7 @@ export function CategorySelector({
   const getSelectedCategoryName = () => {
     if (selectedCategory === "todas") return "Todas las categorías";
     const category = categories.find(
-      (c) => c.id.toString() === selectedCategory
+      (c: Categoria) => c.id.toString() === selectedCategory
     );
     return category ? category.nombre : "Filtrar por categoría";
   };
@@ -39,7 +33,7 @@ export function CategorySelector({
       </SelectTrigger>
       <SelectContent className="bg-background">
         <SelectItem value="todas">Todas las categorías</SelectItem>
-        {categories.map((categoria) => (
+        {categories.map((categoria: Categoria) => (
           <SelectItem key={categoria.id} value={categoria.id.toString()}>
             {categoria.nombre}
           </SelectItem>

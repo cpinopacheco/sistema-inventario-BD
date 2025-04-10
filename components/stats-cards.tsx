@@ -3,9 +3,10 @@
 import { motion } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package2, AlertTriangle, Archive } from "lucide-react";
+import type { StatsCardsProps } from "@/types";
 
 // StatsCards component displays inventory statistics
-export default function StatsCards({ stats }) {
+export default function StatsCards({ stats }: StatsCardsProps) {
   return (
     <div className="space-y-6">
       <h2 className="text-lg font-medium">Resumen de Inventario</h2>

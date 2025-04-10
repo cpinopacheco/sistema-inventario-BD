@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -16,7 +18,8 @@ import { Plus, Minus, Package2 } from "lucide-react";
 import { Loader } from "@/components/ui/loader";
 import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { StockAdjustmentModal } from "@/components/stock-adjustment-modal";
+import { StockAdjustmentModal } from "./stock-adjustment-modal";
+import type { ProductListProps, ProductoConCategoria } from "@/types";
 
 // ProductList component displays all products in a table format
 export default function ProductList({
@@ -28,15 +31,15 @@ export default function ProductList({
   sortConfig,
   isLowStockTab = false,
   loading = false,
-}) {
+}: ProductListProps) {
   // Estado para el modal de ajuste de stock
   const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
   const [selectedProductForAdjustment, setSelectedProductForAdjustment] =
-    useState(null);
+    useState<ProductoConCategoria | null>(null);
   const [isIncrement, setIsIncrement] = useState(true);
 
   // Función para determinar la dirección de ordenamiento
-  const getSortDirection = (key) => {
+  const getSortDirection = (key: string): string | null => {
     if (!sortConfig) {
       return null;
     }
@@ -44,21 +47,24 @@ export default function ProductList({
   };
 
   // Función para mostrar el indicador de ordenamiento
-  const getSortIndicator = (key) => {
+  const getSortIndicator = (key: string): string => {
     const direction = getSortDirection(key);
-    if (!direction) return null;
+    if (!direction) return "";
     return direction === "ascending" ? " ↑" : " ↓";
   };
 
   // Función para abrir el modal de ajuste de stock
-  const handleOpenAdjustmentModal = (product, increment) => {
+  const handleOpenAdjustmentModal = (
+    product: ProductoConCategoria,
+    increment: boolean
+  ) => {
     setSelectedProductForAdjustment(product);
     setIsIncrement(increment);
     setIsAdjustmentModalOpen(true);
   };
 
   // Función para confirmar el ajuste de stock
-  const handleConfirmAdjustment = (cantidad) => {
+  const handleConfirmAdjustment = (cantidad: number) => {
     if (selectedProductForAdjustment) {
       onUpdateQuantity(selectedProductForAdjustment.id, cantidad);
       setIsAdjustmentModalOpen(false);
@@ -67,14 +73,17 @@ export default function ProductList({
   };
 
   // Manejar la selección de producto sin propagar el evento
-  const handleSelectProduct = (e, product) => {
+  const handleSelectProduct = (
+    e: React.MouseEvent,
+    product: ProductoConCategoria
+  ) => {
     e.preventDefault();
     e.stopPropagation();
     onSelectProduct(product);
   };
 
   // Truncar texto largo
-  const truncateText = (text, maxLength = 50) => {
+  const truncateText = (text: string | null, maxLength = 50): string => {
     if (!text) return "Sin descripción";
     return text.length > maxLength
       ? `${text.substring(0, maxLength)}...`
@@ -143,7 +152,7 @@ export default function ProductList({
                   </TableCell>
                 </TableRow>
               ) : (
-                products.map((product, index) => (
+                products.map((product: ProductoConCategoria, index: number) => (
                   <motion.tr
                     key={product.id}
                     initial={{ opacity: 0, y: 10 }}

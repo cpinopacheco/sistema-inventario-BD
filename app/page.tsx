@@ -12,11 +12,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import StatsCards from "@/components/stats-cards";
 import { useMobile } from "@/hooks/use-mobile";
 import { useApi } from "@/hooks/use-api";
-import type { ProductoConCategoria, Categoria } from "@/types";
+import type {
+  ProductoConCategoria,
+  Categoria,
+  Estadisticas,
+  SortConfig,
+  EditedProduct,
+} from "@/types";
 import { toast } from "@/components/ui/use-toast";
 import { Toaster } from "@/components/ui/toaster";
 import { Loader } from "@/components/ui/loader";
-import { TooltipSimple } from "@/components/ui/tooltip";
+import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { exportToExcel } from "@/lib/excel-export";
 import { Header } from "@/components/header";
@@ -35,12 +41,12 @@ export default function InventorySystem() {
   const [selectedProduct, setSelectedProduct] =
     useState<ProductoConCategoria | null>(null);
   const [isAddingProduct, setIsAddingProduct] = useState(false);
-  const [sortConfig, setSortConfig] = useState({
+  const [sortConfig, setSortConfig] = useState<SortConfig>({
     key: null,
     direction: "ascending",
   });
   const [categorias, setCategorias] = useState<Categoria[]>([]);
-  const [estadisticas, setEstadisticas] = useState({
+  const [estadisticas, setEstadisticas] = useState<Estadisticas>({
     totalProductos: 0,
     totalStock: 0,
     stockBajo: 0,
@@ -108,7 +114,7 @@ export default function InventorySystem() {
 
   // Cargar estadísticas
   const cargarEstadisticas = async () => {
-    const data = await fetchApi("/api/estadisticas");
+    const data = await fetchApi<Estadisticas>("/api/estadisticas");
     if (data) {
       setEstadisticas(data);
     }
@@ -135,11 +141,16 @@ export default function InventorySystem() {
     const sortableProducts = [...productos];
     if (sortConfig.key) {
       sortableProducts.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? -1 : 1;
-        }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
-          return sortConfig.direction === "ascending" ? 1 : -1;
+        const keyA = a[sortConfig.key as keyof ProductoConCategoria];
+        const keyB = b[sortConfig.key as keyof ProductoConCategoria];
+
+        if (keyA && keyB) {
+          if (keyA < keyB) {
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          }
+          if (keyA > keyB) {
+            return sortConfig.direction === "ascending" ? 1 : -1;
+          }
         }
         return 0;
       });
@@ -148,7 +159,11 @@ export default function InventorySystem() {
   }, [productos, sortConfig]);
 
   // Función para mostrar toast con auto-cierre
-  const showToast = (title, description, variant = "default") => {
+  const showToast = (
+    title: string,
+    description: string,
+    variant: "default" | "destructive" = "default"
+  ) => {
     const { dismiss } = toast({
       title,
       description,
@@ -162,7 +177,12 @@ export default function InventorySystem() {
   };
 
   // Agregar un nuevo producto
-  const handleAddProduct = async (producto) => {
+  const handleAddProduct = async (producto: {
+    name: string;
+    quantity: number;
+    description: string;
+    categoria_id: number;
+  }) => {
     // Convertir de formato frontend a backend
     const productoParaAPI = {
       nombre: producto.name,
@@ -171,7 +191,7 @@ export default function InventorySystem() {
       categoria_id: producto.categoria_id,
     };
 
-    const data = await fetchApi("/api/productos", {
+    const data = await fetchApi<ProductoConCategoria>("/api/productos", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(productoParaAPI),
@@ -191,7 +211,7 @@ export default function InventorySystem() {
   };
 
   // Seleccionar un producto para ver detalles
-  const handleSelectProduct = async (producto) => {
+  const handleSelectProduct = async (producto: ProductoConCategoria) => {
     // CORRECCIÓN CRÍTICA: Evitar recargar la tabla al ver detalles
     // Primero verificamos si ya tenemos todos los detalles necesarios
     if (producto && producto.descripcion !== undefined) {
@@ -221,17 +241,20 @@ export default function InventorySystem() {
   };
 
   // Actualizar cantidad de producto
-  const handleUpdateQuantity = async (id, cambio) => {
+  const handleUpdateQuantity = async (id: string, cambio: number) => {
     console.log(
       `Actualizando cantidad para producto ${id} con cambio ${cambio}`
     );
 
     try {
-      const data = await fetchApi(`/api/productos/${id}/cantidad`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cambio }),
-      });
+      const data = await fetchApi<ProductoConCategoria>(
+        `/api/productos/${id}/cantidad`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ cambio }),
+        }
+      );
 
       if (data) {
         // Actualizar el producto en la lista local sin recargar toda la tabla
@@ -262,7 +285,7 @@ export default function InventorySystem() {
   };
 
   // Editar un producto
-  const handleEditProduct = async (productoEditado) => {
+  const handleEditProduct = async (productoEditado: EditedProduct) => {
     // Convertir de formato frontend a backend
     const productoParaAPI = {
       nombre: productoEditado.name,
@@ -271,11 +294,14 @@ export default function InventorySystem() {
       categoria_id: productoEditado.categoria_id,
     };
 
-    const data = await fetchApi(`/api/productos/${productoEditado.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(productoParaAPI),
-    });
+    const data = await fetchApi<ProductoConCategoria>(
+      `/api/productos/${productoEditado.id}`,
+      {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(productoParaAPI),
+      }
+    );
 
     if (data) {
       showToast(
@@ -294,8 +320,8 @@ export default function InventorySystem() {
   };
 
   // Eliminar un producto
-  const handleDeleteProduct = async (id) => {
-    const data = await fetchApi(`/api/productos/${id}`, {
+  const handleDeleteProduct = async (id: string) => {
+    const data = await fetchApi<{ message: string }>(`/api/productos/${id}`, {
       method: "DELETE",
     });
 
@@ -313,8 +339,10 @@ export default function InventorySystem() {
   };
 
   // Agregar una nueva categoría
-  const handleAddCategory = async (nombreCategoria) => {
-    const data = await fetchApi("/api/categorias", {
+  const handleAddCategory = async (
+    nombreCategoria: string
+  ): Promise<Categoria | null> => {
+    const data = await fetchApi<Categoria>("/api/categorias", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombre: nombreCategoria }),
@@ -328,13 +356,16 @@ export default function InventorySystem() {
 
       // Actualizar categorías localmente sin recargar
       setCategorias((prevCategorias) => [...prevCategorias, data]);
+      return data;
     }
-
-    return data;
+    return null;
   };
 
   // Editar una categoría
-  const handleEditCategory = async (oldCategory, newCategory) => {
+  const handleEditCategory = async (
+    oldCategory: string,
+    newCategory: string
+  ): Promise<void> => {
     // Encontrar el ID de la categoría por su nombre
     const categoria = categorias.find((c) => c.nombre === oldCategory);
 
@@ -343,7 +374,7 @@ export default function InventorySystem() {
       return;
     }
 
-    const data = await fetchApi(`/api/categorias/${categoria.id}`, {
+    const data = await fetchApi<Categoria>(`/api/categorias/${categoria.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombre: newCategory }),
@@ -370,8 +401,8 @@ export default function InventorySystem() {
   };
 
   // Configurar ordenamiento
-  const requestSort = (key) => {
-    let direction = "ascending";
+  const requestSort = (key: string) => {
+    let direction: "ascending" | "descending" = "ascending";
     if (sortConfig.key === key && sortConfig.direction === "ascending") {
       direction = "descending";
     }
@@ -379,12 +410,12 @@ export default function InventorySystem() {
   };
 
   // Manejar cambio de pestaña
-  const handleTabChange = (value) => {
+  const handleTabChange = (value: string) => {
     setActiveTab(value);
   };
 
   // Manejar cambio de categoría
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: string) => {
     setSelectedCategory(value);
   };
 
