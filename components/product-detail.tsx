@@ -304,21 +304,21 @@ export default function ProductDetail({
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-900 dark:hover:bg-green-950"
+                          className="h-6 w-6 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-950"
                           onClick={() => handleOpenAdjustmentModal(true)}
                         >
-                          <Plus size={14} />
+                          <Plus size={12} />
                         </Button>
                       </TooltipSimple>
                       <TooltipSimple text="Disminuir cantidad">
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8 text-gray-600 border-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-gray-900"
+                          className="h-6 w-6 text-gray-600 border-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-gray-900"
                           onClick={() => handleOpenAdjustmentModal(false)}
                           disabled={product.cantidad <= 0}
                         >
-                          <Minus size={14} />
+                          <Minus size={12} />
                         </Button>
                       </TooltipSimple>
                     </div>
@@ -377,7 +377,7 @@ export default function ProductDetail({
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-6 w-6 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-900 dark:hover:bg-green-950"
+                          className="h-6 w-6 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-950"
                           onClick={() => handleOpenAdjustmentModal(true)}
                         >
                           <Plus size={12} />
@@ -435,13 +435,18 @@ export default function ProductDetail({
             ) : isEditing ? (
               <>
                 <TooltipSimple text="Cancelar edición">
-                  <Button variant="outline" onClick={handleCancel}>
+                  <Button
+                    variant="outline"
+                    onClick={handleCancel}
+                    className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10"
+                  >
                     Cancelar
                   </Button>
                 </TooltipSimple>
                 <TooltipSimple text="Guardar cambios">
                   <Button
-                    className="bg-[#52C1E4] hover:bg-[#3ba9cc] text-white"
+                    variant="outline"
+                    className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10"
                     onClick={handleSave}
                   >
                     <Save size={14} className="mr-1" />
@@ -501,12 +506,14 @@ export default function ProductDetail({
               <Button
                 variant="outline"
                 onClick={() => setIsAddingCategory(false)}
+                className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10"
               >
                 Cancelar
               </Button>
               <Button
+                variant="outline"
                 onClick={handleAddCategory}
-                className="bg-[#52C1E4] hover:bg-[#3ba9cc] text-white"
+                className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10"
               >
                 Agregar
               </Button>
@@ -544,12 +551,14 @@ export default function ProductDetail({
               <Button
                 variant="outline"
                 onClick={() => setIsEditingCategory(false)}
+                className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10"
               >
                 Cancelar
               </Button>
               <Button
+                variant="outline"
                 onClick={handleEditCategory}
-                className="bg-[#52C1E4] hover:bg-[#3ba9cc] text-white"
+                className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10"
               >
                 Guardar
               </Button>

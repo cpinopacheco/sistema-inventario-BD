@@ -286,12 +286,18 @@ export default function AddProductForm({
           </div>
 
           <div className="flex justify-end gap-2 pt-2">
-            <Button type="button" variant="outline" onClick={onCancel}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10"
+            >
               Cancelar
             </Button>
             <Button
               type="submit"
-              className="bg-[#52C1E4] hover:bg-[#3ba9cc] text-white"
+              variant="outline"
+              className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10"
             >
               Agregar Producto
             </Button>
@@ -325,12 +331,14 @@ export default function AddProductForm({
               <Button
                 variant="outline"
                 onClick={() => setIsAddingCategory(false)}
+                className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10"
               >
                 Cancelar
               </Button>
               <Button
+                variant="outline"
                 onClick={handleAddCategory}
-                className="bg-[#52C1E4] hover:bg-[#3ba9cc] text-white"
+                className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10"
               >
                 Agregar
               </Button>

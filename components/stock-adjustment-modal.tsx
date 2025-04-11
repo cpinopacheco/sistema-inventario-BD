@@ -108,13 +108,13 @@ export function StockAdjustmentModal({
 
           <div className="p-4 space-y-4">
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              <p className="text-sm text-gray-500 dark:text-gray-300 mb-2">
                 Producto:{" "}
                 <span className="font-medium text-foreground">
                   {productName}
                 </span>
               </p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
+              <p className="text-sm text-gray-500 dark:text-gray-300">
                 Stock actual:{" "}
                 <span className="font-medium text-foreground">
                   {currentStock}
@@ -123,7 +123,7 @@ export function StockAdjustmentModal({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="cantidad">
+              <Label htmlFor="cantidad" className="text-foreground">
                 Cantidad a {isIncrement ? "agregar" : "restar"}
               </Label>
               <div className="flex items-center gap-2">
@@ -139,7 +139,9 @@ export function StockAdjustmentModal({
                   id="cantidad"
                   value={cantidad}
                   onChange={handleChange}
-                  className={error ? "border-red-500" : ""}
+                  className={`${
+                    error ? "border-red-500" : ""
+                  } dark:border-gray-600 dark:bg-gray-900 dark:text-white`}
                   placeholder="Ingrese cantidad"
                   autoFocus
                 />
@@ -148,15 +150,20 @@ export function StockAdjustmentModal({
             </div>
 
             <div className="pt-2 flex justify-end gap-2">
-              <Button variant="outline" onClick={onClose}>
+              <Button
+                variant="outline"
+                onClick={onClose}
+                className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10"
+              >
                 Cancelar
               </Button>
               <Button
+                variant="outline"
                 onClick={handleConfirm}
                 className={
                   isIncrement
-                    ? "bg-green-600 hover:bg-green-700 text-white"
-                    : "bg-red-600 hover:bg-red-700 text-white"
+                    ? "border-green-600 text-green-600 hover:bg-green-600/10 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500/10"
+                    : "border-red-600 text-red-600 hover:bg-red-600/10 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-500/10"
                 }
               >
                 {isIncrement ? "Aumentar" : "Disminuir"} Stock
