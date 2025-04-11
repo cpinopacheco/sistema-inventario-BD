@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
 import { motion } from "framer-motion";
 import { X, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,6 +23,32 @@ import {
 } from "@/components/ui/dialog";
 import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import type { Categoria } from "@/types";
+
+interface AddProductFormProps {
+  onAddProduct: (product: {
+    name: string;
+    quantity: number;
+    description: string;
+    categoria_id: number;
+  }) => void;
+  onCancel: () => void;
+  categories: Categoria[];
+  onAddCategory: (name: string) => Promise<Categoria | null>;
+}
+
+interface FormData {
+  name: string;
+  quantity: number;
+  description: string;
+  categoria_id: number | null;
+}
+
+interface FormErrors {
+  name?: string;
+  quantity?: string;
+  categoria_id?: string;
+}
 
 // AddProductForm component provides a modal form to add new products
 export default function AddProductForm({
@@ -30,9 +56,9 @@ export default function AddProductForm({
   onCancel,
   categories,
   onAddCategory,
-}) {
+}: AddProductFormProps) {
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     quantity: 0,
     description: "",
@@ -40,7 +66,7 @@ export default function AddProductForm({
   });
 
   // Form validation state
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   // New category state
   const [isAddingCategory, setIsAddingCategory] = useState(false);
@@ -48,7 +74,9 @@ export default function AddProductForm({
   const [categoryError, setCategoryError] = useState("");
 
   // Handle form input changes
-  const handleChange = (e) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
@@ -56,16 +84,16 @@ export default function AddProductForm({
     });
 
     // Clear error when field is edited
-    if (errors[name]) {
+    if (errors[name as keyof FormErrors]) {
       setErrors({
         ...errors,
-        [name]: null,
+        [name]: undefined,
       });
     }
   };
 
   // Handle category selection
-  const handleCategoryChange = (value) => {
+  const handleCategoryChange = (value: string) => {
     if (value === "nueva") {
       setIsAddingCategory(true);
     } else {
@@ -77,7 +105,7 @@ export default function AddProductForm({
       if (errors.categoria_id) {
         setErrors({
           ...errors,
-          categoria_id: null,
+          categoria_id: undefined,
         });
       }
     }
@@ -112,8 +140,8 @@ export default function AddProductForm({
   };
 
   // Validate form before submission
-  const validateForm = () => {
-    const newErrors = {};
+  const validateForm = (): boolean => {
+    const newErrors: FormErrors = {};
 
     if (!formData.name.trim()) {
       newErrors.name = "El nombre del producto es obligatorio";
@@ -132,11 +160,16 @@ export default function AddProductForm({
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
 
-    if (validateForm()) {
-      onAddProduct(formData);
+    if (validateForm() && formData.categoria_id !== null) {
+      onAddProduct({
+        name: formData.name,
+        quantity: formData.quantity,
+        description: formData.description,
+        categoria_id: formData.categoria_id,
+      });
     }
   };
 
@@ -277,7 +310,9 @@ export default function AddProductForm({
                 <Input
                   id="newCategory"
                   value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setNewCategory(e.target.value)
+                  }
                   placeholder="Ingrese nombre de la categoría"
                   className={categoryError ? "border-red-500" : ""}
                 />
