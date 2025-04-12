@@ -1,25 +1,18 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { motion } from "framer-motion";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Plus, Minus, Package2 } from "lucide-react";
-import { Loader } from "@/components/ui/loader";
-import { TooltipSimple } from "@/components/ui/tooltip-simple";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { StockAdjustmentModal } from "./stock-adjustment-modal";
-import type { ProductListProps, ProductoConCategoria } from "@/types";
+import { useState } from "react"
+import { motion } from "framer-motion"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Plus, Minus, Package2 } from "lucide-react"
+import { Loader } from "@/components/ui/loader"
+import { TooltipSimple } from "@/components/ui/tooltip-simple"
+import { TooltipProvider } from "@/components/ui/tooltip"
+import { StockAdjustmentModal } from "./stock-adjustment-modal"
+import type { ProductListProps, ProductoConCategoria } from "@/types"
 
 // ProductList component displays all products in a table format
 export default function ProductList({
@@ -33,75 +26,63 @@ export default function ProductList({
   loading = false,
 }: ProductListProps) {
   // Estado para el modal de ajuste de stock
-  const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
-  const [selectedProductForAdjustment, setSelectedProductForAdjustment] =
-    useState<ProductoConCategoria | null>(null);
-  const [isIncrement, setIsIncrement] = useState(true);
+  const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false)
+  const [selectedProductForAdjustment, setSelectedProductForAdjustment] = useState<ProductoConCategoria | null>(null)
+  const [isIncrement, setIsIncrement] = useState(true)
 
   // Función para determinar la dirección de ordenamiento
   const getSortDirection = (key: string): string | null => {
     if (!sortConfig) {
-      return null;
+      return null
     }
-    return sortConfig.key === key ? sortConfig.direction : null;
-  };
+    return sortConfig.key === key ? sortConfig.direction : null
+  }
 
   // Función para mostrar el indicador de ordenamiento
   const getSortIndicator = (key: string): string => {
-    const direction = getSortDirection(key);
-    if (!direction) return "";
-    return direction === "ascending" ? " ↑" : " ↓";
-  };
+    const direction = getSortDirection(key)
+    if (!direction) return ""
+    return direction === "ascending" ? " ↑" : " ↓"
+  }
 
   // Función para abrir el modal de ajuste de stock
-  const handleOpenAdjustmentModal = (
-    product: ProductoConCategoria,
-    increment: boolean
-  ) => {
-    setSelectedProductForAdjustment(product);
-    setIsIncrement(increment);
-    setIsAdjustmentModalOpen(true);
-  };
+  const handleOpenAdjustmentModal = (product: ProductoConCategoria, increment: boolean) => {
+    setSelectedProductForAdjustment(product)
+    setIsIncrement(increment)
+    setIsAdjustmentModalOpen(true)
+  }
 
   // Función para confirmar el ajuste de stock
   const handleConfirmAdjustment = (cantidad: number) => {
     if (selectedProductForAdjustment) {
-      onUpdateQuantity(selectedProductForAdjustment.id, cantidad);
-      setIsAdjustmentModalOpen(false);
-      setSelectedProductForAdjustment(null);
+      onUpdateQuantity(selectedProductForAdjustment.id, cantidad)
+      setIsAdjustmentModalOpen(false)
+      setSelectedProductForAdjustment(null)
     }
-  };
+  }
 
   // Manejar la selección de producto sin propagar el evento
-  const handleSelectProduct = (
-    e: React.MouseEvent,
-    product: ProductoConCategoria
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onSelectProduct(product);
-  };
+  const handleSelectProduct = (e: React.MouseEvent, product: ProductoConCategoria) => {
+    e.preventDefault()
+    e.stopPropagation()
+    onSelectProduct(product)
+  }
 
   // Truncar texto largo
   const truncateText = (text: string | null, maxLength = 50): string => {
-    if (!text) return "Sin descripción";
-    return text.length > maxLength
-      ? `${text.substring(0, maxLength)}...`
-      : text;
-  };
+    if (!text) return "Sin descripción"
+    return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text
+  }
 
   return (
     <TooltipProvider>
       <div className="bg-card rounded-lg shadow-md">
         <div className="p-4 border-b">
           <h2 className="text-lg font-medium text-[#013612] dark:text-[#BFD189]">
-            {isLowStockTab
-              ? "Productos con Stock Bajo"
-              : "Productos en Inventario"}
+            {isLowStockTab ? "Productos con Stock Bajo" : "Productos en Inventario"}
           </h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {products.length} productos{" "}
-            {isLowStockTab ? "con stock bajo" : "en inventario"}
+            {products.length} productos {isLowStockTab ? "con stock bajo" : "en inventario"}
           </p>
         </div>
 
@@ -110,17 +91,11 @@ export default function ProductList({
             <TableHeader className="sticky top-0 bg-background z-10">
               <TableRow>
                 <TableHead className="w-[80px]">#</TableHead>
-                <TableHead
-                  className="cursor-pointer hover:bg-muted"
-                  onClick={() => onRequestSort("nombre")}
-                >
+                <TableHead className="cursor-pointer hover:bg-muted" onClick={() => onRequestSort("nombre")}>
                   Nombre {getSortIndicator("nombre")}
                 </TableHead>
                 <TableHead>Descripción</TableHead>
-                <TableHead
-                  className="cursor-pointer hover:bg-muted"
-                  onClick={() => onRequestSort("categoria")}
-                >
+                <TableHead className="cursor-pointer hover:bg-muted" onClick={() => onRequestSort("categoria")}>
                   Categoría {getSortIndicator("categoria")}
                 </TableHead>
                 <TableHead
@@ -144,10 +119,7 @@ export default function ProductList({
                 </TableRow>
               ) : products.length === 0 ? (
                 <TableRow>
-                  <TableCell
-                    colSpan={6}
-                    className="text-center py-8 text-gray-500 dark:text-gray-400"
-                  >
+                  <TableCell colSpan={6} className="text-center py-8 text-gray-500 dark:text-gray-400">
                     No se encontraron productos
                   </TableCell>
                 </TableRow>
@@ -162,11 +134,8 @@ export default function ProductList({
                       delay: index * 0.03,
                       ease: [0.25, 0.1, 0.25, 1.0],
                     }}
-                    className={`cursor-pointer transition-colors ${
-                      selectedProductId === product.id
-                        ? "bg-gray-100 dark:bg-gray-700/60"
-                        : ""
-                    } hover:bg-gray-100 dark:hover:bg-gray-700/40`}
+                    className={`cursor-pointer transition-colors ${selectedProductId === product.id ? "bg-gray-100/80 dark:bg-gray-700/40" : ""
+                      } hover:bg-gray-100/50 dark:hover:bg-gray-700/25`}
                     onClick={(e) => handleSelectProduct(e, product)}
                   >
                     <TableCell className="font-medium">{product.id}</TableCell>
@@ -177,9 +146,7 @@ export default function ProductList({
                       </div>
                     </TableCell>
                     <TableCell className="max-w-[200px] truncate">
-                      <TooltipSimple
-                        text={product.descripcion || "Sin descripción"}
-                      >
+                      <TooltipSimple text={product.descripcion || "Sin descripción"}>
                         <span>{truncateText(product.descripcion)}</span>
                       </TooltipSimple>
                     </TableCell>
@@ -196,18 +163,15 @@ export default function ProductList({
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div
-                        className="flex justify-end gap-1"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                      <div className="flex justify-end gap-1" onClick={(e) => e.stopPropagation()}>
                         <TooltipSimple text="Aumentar cantidad">
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8 text-green-600 border-green-200 hover:bg-green-50 dark:text-green-400 dark:border-green-900 dark:hover:bg-green-950"
+                            className="h-8 w-8 text-green-600 border-green-500 hover:bg-green-100 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-900 border-2"
                             onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenAdjustmentModal(product, true);
+                              e.stopPropagation()
+                              handleOpenAdjustmentModal(product, true)
                             }}
                           >
                             <Plus size={14} />
@@ -218,10 +182,10 @@ export default function ProductList({
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8 text-gray-600 border-gray-200 hover:bg-gray-50 dark:text-gray-400 dark:border-gray-800 dark:hover:bg-gray-900"
+                            className="h-8 w-8 text-gray-600 border-gray-400 hover:bg-gray-100 dark:text-gray-300 dark:border-gray-500 dark:hover:bg-gray-800 border-2"
                             onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenAdjustmentModal(product, false);
+                              e.stopPropagation()
+                              handleOpenAdjustmentModal(product, false)
                             }}
                             disabled={product.cantidad <= 0}
                           >
@@ -250,5 +214,5 @@ export default function ProductList({
         )}
       </div>
     </TooltipProvider>
-  );
+  )
 }

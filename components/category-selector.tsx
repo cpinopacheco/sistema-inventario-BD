@@ -1,27 +1,16 @@
-"use client";
+"use client"
 
-import { Filter } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
-import type { CategorySelectorProps, Categoria } from "@/types";
+import { Filter } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select"
+import type { CategorySelectorProps, Categoria } from "@/types"
 
-export function CategorySelector({
-  categories,
-  selectedCategory,
-  onCategoryChange,
-}: CategorySelectorProps) {
+export function CategorySelector({ categories, selectedCategory, onCategoryChange }: CategorySelectorProps) {
   // Encontrar el nombre de la categoría seleccionada
   const getSelectedCategoryName = () => {
-    if (selectedCategory === "todas") return "Todas las categorías";
-    const category = categories.find(
-      (c: Categoria) => c.id.toString() === selectedCategory
-    );
-    return category ? category.nombre : "Filtrar por categoría";
-  };
+    if (selectedCategory === "todas") return "Todas las categorías"
+    const category = categories.find((c: Categoria) => c.id.toString() === selectedCategory)
+    return category ? category.nombre : "Filtrar por categoría"
+  }
 
   return (
     <Select value={selectedCategory} onValueChange={onCategoryChange}>
@@ -40,5 +29,5 @@ export function CategorySelector({
         ))}
       </SelectContent>
     </Select>
-  );
+  )
 }
