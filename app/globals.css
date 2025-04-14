@@ -88,6 +88,11 @@
   .table-row-hover {
     @apply transition-colors duration-200 hover:bg-muted/30;
   }
+
+  /* Añadir esta nueva clase para el header */
+  .header-shadow-dark {
+    @apply shadow-[0_4px_12px_rgba(0,0,0,0.5)];
+  }
 }
 
 @layer base {

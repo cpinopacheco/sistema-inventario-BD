@@ -24,7 +24,7 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
 
   return (
     <TooltipProvider>
-      <header className="bg-[#013612] dark:bg-[#011a09] text-white p-4 shadow-md relative">
+      <header className="bg-[#013612] dark:bg-[#013d14] text-white p-4 shadow-md dark:header-shadow-dark relative">
         {isMobile ? (
           <>
             {/* Botón de tema posicionado arriba a la derecha en mobile */}

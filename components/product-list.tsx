@@ -90,6 +90,15 @@ export default function ProductList({
       : text;
   };
 
+  // Función para determinar el estilo del badge según la cantidad
+  const getStockBadgeStyle = (quantity: number) => {
+    if (quantity > 10) {
+      return "bg-[#BFD189] hover:bg-[#a9bd77] text-[#004717] dark:bg-[#3a5129] dark:hover:bg-[#456231] dark:text-[#d9f0a3] font-medium";
+    } else {
+      return "bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600 dark:text-white font-medium";
+    }
+  };
+
   return (
     <TooltipProvider>
       <div className="bg-card rounded-lg shadow-md dark:border dark:border-gray-700 dark:shadow-md dark:shadow-black/30">
@@ -198,13 +207,7 @@ export default function ProductList({
                       {product.categoria}
                     </TableCell>
                     <TableCell className="text-center dark:border-gray-600">
-                      <Badge
-                        className={
-                          product.cantidad > 10
-                            ? "bg-[#BFD189] hover:bg-[#a9bd77] text-[#013612] dark:bg-[#2a3b1e] dark:text-[#BFD189]"
-                            : "bg-red-600 hover:bg-red-700 text-white"
-                        }
-                      >
+                      <Badge className={getStockBadgeStyle(product.cantidad)}>
                         {product.cantidad}
                       </Badge>
                     </TableCell>
