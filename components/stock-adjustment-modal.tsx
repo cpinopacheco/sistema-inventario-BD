@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
 
 interface StockAdjustmentModalProps {
   isOpen: boolean;
@@ -77,6 +78,15 @@ export function StockAdjustmentModal({
     }
   };
 
+  // Función para determinar el estilo del badge según la cantidad
+  const getStockBadgeStyle = (quantity: number) => {
+    if (quantity > 10) {
+      return "bg-[#BFD189] hover:bg-[#a9bd77] text-[#013612] dark:bg-[#3a5129] dark:hover:bg-[#456231] dark:text-[#d9f0a3] font-semibold text-sm px-3 py-0 flex items-center justify-center h-6";
+    } else {
+      return "bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600 dark:text-white font-semibold text-sm px-3 py-0 flex items-center justify-center h-6";
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -94,7 +104,7 @@ export function StockAdjustmentModal({
           }}
           className="w-full max-w-[500px] rounded-xl overflow-hidden bg-background border-2 border-[#BFD189] shadow-lg dark:border-gray-600"
         >
-          <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 flex flex-row justify-between items-center">
+          <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 relative flex items-center justify-between">
             <h2 className="text-xl font-semibold text-[#013612] dark:text-[#BFD189]">
               {isIncrement ? "Aumentar" : "Disminuir"} Stock
             </h2>
@@ -115,12 +125,14 @@ export function StockAdjustmentModal({
                   {productName}
                 </span>
               </p>
-              <p className="text-base text-gray-500 dark:text-gray-300">
-                Stock actual:{" "}
-                <span className="font-medium text-foreground">
+              <div className="flex items-center gap-2">
+                <p className="text-base text-gray-500 dark:text-gray-300">
+                  Stock actual:
+                </p>
+                <Badge className={getStockBadgeStyle(currentStock)}>
                   {currentStock}
-                </span>
-              </p>
+                </Badge>
+              </div>
             </div>
 
             <div className="space-y-3">
@@ -155,7 +167,7 @@ export function StockAdjustmentModal({
             <Button
               variant="outline"
               onClick={onClose}
-              className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border px-6 py-2 text-base"
+              className="border-[#EABD00] text-[#C79C00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border px-6 py-2 text-base font-medium"
             >
               Cancelar
             </Button>
@@ -164,8 +176,8 @@ export function StockAdjustmentModal({
               onClick={handleConfirm}
               className={
                 isIncrement
-                  ? "border-green-600 text-green-600 hover:bg-green-600/10 dark:border-green-500 dark:text-green-500 dark:hover:bg-green-500/10 border px-6 py-2 text-base"
-                  : "border-red-600 text-red-600 hover:bg-red-600/10 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-500/10 border px-6 py-2 text-base"
+                  ? "text-blue-600 border-blue-500 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-blue-950 border px-6 py-2 text-base font-medium"
+                  : "border-red-600 text-red-600 hover:bg-red-600/10 dark:border-red-500 dark:text-red-500 dark:hover:bg-red-500/10 border px-6 py-2 text-base font-medium"
               }
             >
               {isIncrement ? "Aumentar" : "Disminuir"} Stock

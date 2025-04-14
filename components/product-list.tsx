@@ -93,9 +93,9 @@ export default function ProductList({
   // Función para determinar el estilo del badge según la cantidad
   const getStockBadgeStyle = (quantity: number) => {
     if (quantity > 10) {
-      return "bg-[#BFD189] hover:bg-[#a9bd77] text-[#004717] dark:bg-[#3a5129] dark:hover:bg-[#456231] dark:text-[#d9f0a3] font-medium";
+      return "bg-[#BFD189] hover:bg-[#a9bd77] text-[#013612] dark:bg-[#3a5129] dark:hover:bg-[#456231] dark:text-[#d9f0a3] font-semibold text-sm px-3 py-0 flex items-center justify-center h-6";
     } else {
-      return "bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600 dark:text-white font-medium";
+      return "bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600 dark:text-white font-semibold text-sm px-3 py-0 flex items-center justify-center h-6";
     }
   };
 
@@ -115,142 +115,150 @@ export default function ProductList({
         </div>
 
         <div>
-          <Table>
-            <TableHeader className="sticky top-0 bg-background z-10">
-              <TableRow className="dark:border-gray-600">
-                <TableHead className="w-[80px] dark:border-gray-600">
-                  #
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer hover:bg-muted dark:border-gray-600"
-                  onClick={() => onRequestSort("nombre")}
-                >
-                  Nombre {getSortIndicator("nombre")}
-                </TableHead>
-                <TableHead className="dark:border-gray-600">
-                  Descripción
-                </TableHead>
-                <TableHead
-                  className="cursor-pointer hover:bg-muted dark:border-gray-600"
-                  onClick={() => onRequestSort("categoria")}
-                >
-                  Categoría {getSortIndicator("categoria")}
-                </TableHead>
-                <TableHead
-                  className="text-center cursor-pointer hover:bg-muted dark:border-gray-600"
-                  onClick={() => onRequestSort("cantidad")}
-                >
-                  Stock {getSortIndicator("cantidad")}
-                </TableHead>
-                <TableHead className="text-right dark:border-gray-600">
-                  Acciones
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
+          <div className="overflow-hidden">
+            <Table>
+              <TableHeader className="sticky top-0 bg-background z-10">
                 <TableRow className="dark:border-gray-600">
-                  <TableCell
-                    colSpan={6}
-                    className="text-center py-8 dark:border-gray-600"
+                  <TableHead className="w-[80px] dark:border-gray-600">
+                    #
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted dark:border-gray-600"
+                    onClick={() => onRequestSort("nombre")}
                   >
-                    <div className="flex items-center justify-center gap-2">
-                      <Loader />
-                      <span>Cargando productos...</span>
-                    </div>
-                  </TableCell>
+                    Nombre {getSortIndicator("nombre")}
+                  </TableHead>
+                  <TableHead className="dark:border-gray-600">
+                    Descripción
+                  </TableHead>
+                  <TableHead
+                    className="cursor-pointer hover:bg-muted dark:border-gray-600"
+                    onClick={() => onRequestSort("categoria")}
+                  >
+                    Categoría {getSortIndicator("categoria")}
+                  </TableHead>
+                  <TableHead
+                    className="text-center cursor-pointer hover:bg-muted dark:border-gray-600"
+                    onClick={() => onRequestSort("cantidad")}
+                  >
+                    Stock {getSortIndicator("cantidad")}
+                  </TableHead>
+                  <TableHead className="text-right dark:border-gray-600">
+                    Acciones
+                  </TableHead>
                 </TableRow>
-              ) : products.length === 0 ? (
-                <TableRow className="dark:border-gray-600">
-                  <TableCell
-                    colSpan={6}
-                    className="text-center py-8 text-gray-500 dark:text-gray-400 dark:border-gray-600"
-                  >
-                    No se encontraron productos
-                  </TableCell>
-                </TableRow>
-              ) : (
-                products.map((product: ProductoConCategoria, index: number) => (
-                  <motion.tr
-                    key={product.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{
-                      duration: 0.4,
-                      delay: index * 0.03,
-                      ease: [0.25, 0.1, 0.25, 1.0],
-                    }}
-                    className={`cursor-pointer transition-colors dark:border-gray-600 ${
-                      selectedProductId === product.id
-                        ? "bg-gray-100/80 dark:bg-gray-700/40"
-                        : ""
-                    } hover:bg-gray-100/50 dark:hover:bg-gray-700/25`}
-                    onClick={(e) => handleSelectProduct(e, product)}
-                  >
-                    <TableCell className="font-medium dark:border-gray-600">
-                      {product.id}
-                    </TableCell>
-                    <TableCell className="dark:border-gray-600">
-                      <div className="flex items-center gap-2">
-                        <Package2 size={16} className="text-gray-400" />
-                        {product.nombre}
+              </TableHeader>
+              <TableBody>
+                {loading ? (
+                  <TableRow className="dark:border-gray-600">
+                    <TableCell
+                      colSpan={6}
+                      className="text-center py-8 dark:border-gray-600"
+                    >
+                      <div className="flex items-center justify-center gap-2">
+                        <Loader />
+                        <span>Cargando productos...</span>
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[200px] truncate dark:border-gray-600">
-                      <TooltipSimple
-                        text={product.descripcion || "Sin descripción"}
+                  </TableRow>
+                ) : products.length === 0 ? (
+                  <TableRow className="dark:border-gray-600">
+                    <TableCell
+                      colSpan={6}
+                      className="text-center py-8 text-gray-500 dark:text-gray-400 dark:border-gray-600"
+                    >
+                      No se encontraron productos
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  products.map(
+                    (product: ProductoConCategoria, index: number) => (
+                      <motion.tr
+                        key={product.id}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.4,
+                          delay: index * 0.03,
+                          ease: [0.25, 0.1, 0.25, 1.0],
+                        }}
+                        className={`cursor-pointer transition-colors dark:border-gray-600 ${
+                          selectedProductId === product.id
+                            ? "bg-gray-100/80 dark:bg-gray-700/40"
+                            : ""
+                        } hover:bg-gray-100/50 dark:hover:bg-gray-700/25`}
+                        onClick={(e) => handleSelectProduct(e, product)}
                       >
-                        <span>{truncateText(product.descripcion)}</span>
-                      </TooltipSimple>
-                    </TableCell>
-                    <TableCell className="dark:border-gray-600">
-                      {product.categoria}
-                    </TableCell>
-                    <TableCell className="text-center dark:border-gray-600">
-                      <Badge className={getStockBadgeStyle(product.cantidad)}>
-                        {product.cantidad}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right dark:border-gray-600">
-                      <div
-                        className="flex justify-end gap-1"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <TooltipSimple text="Aumentar cantidad">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 text-green-600 border-green-500 hover:bg-green-100 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-900 border"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenAdjustmentModal(product, true);
-                            }}
+                        <TableCell className="font-medium dark:border-gray-600">
+                          {product.id}
+                        </TableCell>
+                        <TableCell className="dark:border-gray-600">
+                          <div className="flex items-center gap-2">
+                            <Package2 size={16} className="text-gray-400" />
+                            {product.nombre}
+                          </div>
+                        </TableCell>
+                        <TableCell className="max-w-[200px] truncate dark:border-gray-600">
+                          <TooltipSimple
+                            text={product.descripcion || "Sin descripción"}
                           >
-                            <Plus size={14} />
-                          </Button>
-                        </TooltipSimple>
+                            <span>{truncateText(product.descripcion)}</span>
+                          </TooltipSimple>
+                        </TableCell>
+                        <TableCell className="dark:border-gray-600">
+                          {product.categoria}
+                        </TableCell>
+                        <TableCell className="text-center dark:border-gray-600">
+                          <div className="flex justify-center">
+                            <Badge
+                              className={getStockBadgeStyle(product.cantidad)}
+                            >
+                              {product.cantidad}
+                            </Badge>
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right dark:border-gray-600">
+                          <div
+                            className="flex justify-end gap-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <TooltipSimple text="Aumentar cantidad">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8 text-green-600 border-green-500 hover:bg-green-100 dark:text-green-400 dark:border-green-500 dark:hover:bg-green-900 border"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenAdjustmentModal(product, true);
+                                }}
+                              >
+                                <Plus size={14} />
+                              </Button>
+                            </TooltipSimple>
 
-                        <TooltipSimple text="Disminuir cantidad">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 text-gray-600 border-gray-400 hover:bg-gray-100 dark:text-gray-300 dark:border-gray-500 dark:hover:bg-gray-800 border"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenAdjustmentModal(product, false);
-                            }}
-                            disabled={product.cantidad <= 0}
-                          >
-                            <Minus size={14} />
-                          </Button>
-                        </TooltipSimple>
-                      </div>
-                    </TableCell>
-                  </motion.tr>
-                ))
-              )}
-            </TableBody>
-          </Table>
+                            <TooltipSimple text="Disminuir cantidad">
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="h-8 w-8 text-gray-600 border-gray-400 hover:bg-gray-100 dark:text-gray-300 dark:border-gray-500 dark:hover:bg-gray-800 border"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleOpenAdjustmentModal(product, false);
+                                }}
+                                disabled={product.cantidad <= 0}
+                              >
+                                <Minus size={14} />
+                              </Button>
+                            </TooltipSimple>
+                          </div>
+                        </TableCell>
+                      </motion.tr>
+                    )
+                  )
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
 
         {/* Modal para ajustar stock */}

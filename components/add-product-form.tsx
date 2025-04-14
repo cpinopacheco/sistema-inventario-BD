@@ -181,7 +181,7 @@ export default function AddProductForm({
           }}
           className="w-full max-w-[600px] rounded-xl overflow-hidden bg-background border-2 border-[#BFD189] shadow-lg dark:border-gray-600"
         >
-          <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 flex flex-row justify-between items-center">
+          <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 relative flex items-center justify-between">
             <h2 className="text-xl font-semibold text-[#013612] dark:text-[#BFD189]">
               Agregar Nuevo Producto
             </h2>
@@ -295,7 +295,7 @@ export default function AddProductForm({
               type="button"
               variant="outline"
               onClick={onCancel}
-              className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border"
+              className="border-[#EABD00] text-[#C79C00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border font-medium"
             >
               Cancelar
             </Button>
@@ -303,7 +303,7 @@ export default function AddProductForm({
               type="submit"
               variant="outline"
               onClick={handleSubmit}
-              className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10 border"
+              className="text-blue-600 border-blue-500 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-blue-950 border font-medium"
             >
               Agregar Producto
             </Button>
@@ -314,7 +314,7 @@ export default function AddProductForm({
       {/* Dialog para agregar nueva categoría */}
       <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
         <DialogContent className="sm:max-w-[425px] rounded-xl border-2 border-[#BFD189] dark:border-gray-600 p-0 overflow-hidden">
-          <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 flex flex-row justify-between items-center">
+          <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 relative flex items-center justify-between">
             <DialogTitle className="text-lg font-semibold text-[#013612] dark:text-[#BFD189]">
               Agregar Nueva Categoría
             </DialogTitle>
@@ -323,7 +323,7 @@ export default function AddProductForm({
               className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
               aria-label="Cerrar"
             >
-              <X size={18} />
+              <X size={20} />
             </button>
           </div>
 
@@ -356,7 +356,7 @@ export default function AddProductForm({
             <Button
               variant="outline"
               onClick={handleAddCategory}
-              className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10 border"
+              className="text-blue-600 border-blue-500 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-blue-950 border"
             >
               Agregar
             </Button>

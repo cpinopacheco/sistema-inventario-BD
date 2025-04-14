@@ -2,11 +2,12 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+// Update the Table component to prevent the scrollbar from appearing temporarily
 const Table = React.forwardRef<
   HTMLTableElement,
   React.HTMLAttributes<HTMLTableElement>
 >(({ className, ...props }, ref) => (
-  <div className="relative w-full overflow-auto">
+  <div className="relative w-full overflow-auto overflow-y-hidden">
     <table
       ref={ref}
       className={cn("w-full caption-bottom text-sm", className)}

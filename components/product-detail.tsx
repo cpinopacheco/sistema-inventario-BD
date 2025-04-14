@@ -28,6 +28,7 @@ import { TooltipSimple } from "@/components/ui/tooltip-simple";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { StockAdjustmentModal } from "./stock-adjustment-modal";
+import { Badge } from "@/components/ui/badge";
 import type { ProductDetailProps, EditedProduct, Categoria } from "@/types";
 
 // ProductDetail component shows detailed information about a selected product
@@ -199,6 +200,15 @@ export default function ProductDetail({
     setIsEditing(false);
   };
 
+  // Función para determinar el estilo del badge según la cantidad
+  const getStockBadgeStyle = (quantity: number) => {
+    if (quantity > 10) {
+      return "bg-[#BFD189] hover:bg-[#a9bd77] text-[#013612] dark:bg-[#3a5129] dark:hover:bg-[#456231] dark:text-[#d9f0a3] font-semibold text-sm px-3 py-0 flex items-center justify-center h-6";
+    } else {
+      return "bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600 dark:text-white font-semibold text-sm px-3 py-0 flex items-center justify-center h-6";
+    }
+  };
+
   return (
     <TooltipProvider>
       <motion.div
@@ -212,7 +222,7 @@ export default function ProductDetail({
         className="bg-background"
       >
         <Card className="border-[#BFD189] border-2 w-full mx-auto bg-background shadow-lg dark:border-gray-600 rounded-xl overflow-hidden">
-          <CardHeader className="bg-[#f5f9e8] dark:bg-[#1a2e22] pb-2 px-6 py-4 flex flex-row justify-between items-center">
+          <CardHeader className="bg-[#f5f9e8] dark:bg-[#1a2e22] pb-2 px-6 py-4 relative flex flex-row items-center justify-between">
             <CardTitle className="text-[#013612] dark:text-[#BFD189] text-xl">
               {isEditing ? "Editar Producto" : "Detalles del Producto"}
             </CardTitle>
@@ -290,10 +300,10 @@ export default function ProductDetail({
                 <div className="space-y-2">
                   <Label htmlFor="quantity">Cantidad</Label>
                   <div className="flex items-center gap-2">
-                    <div className="flex-1 text-sm font-medium">
+                    <Badge className={getStockBadgeStyle(product.cantidad)}>
                       {product.cantidad}
-                    </div>
-                    <div className="flex gap-1">
+                    </Badge>
+                    <div className="flex gap-1 ml-auto">
                       <TooltipSimple text="Aumentar cantidad">
                         <Button
                           variant="outline"
@@ -332,9 +342,9 @@ export default function ProductDetail({
               </div>
             ) : (
               <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
                 className="space-y-4"
               >
                 <div className="grid grid-cols-2 gap-2">
@@ -363,9 +373,9 @@ export default function ProductDetail({
                     Cantidad
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="text-sm font-medium">
+                    <Badge className={getStockBadgeStyle(product.cantidad)}>
                       {product.cantidad}
-                    </div>
+                    </Badge>
                     <div className="flex gap-1 ml-auto">
                       <TooltipSimple text="Aumentar cantidad">
                         <Button
@@ -440,7 +450,7 @@ export default function ProductDetail({
                 <TooltipSimple text="Guardar cambios">
                   <Button
                     variant="outline"
-                    className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10 border"
+                    className="text-blue-600 border-blue-500 hover:bg-blue-50 dark:text-blue-400 dark:border-blue-500 dark:hover:bg-blue-950 border"
                     onClick={handleSave}
                   >
                     <Save size={14} className="mr-1" />
@@ -478,7 +488,7 @@ export default function ProductDetail({
         {/* Dialog para agregar nueva categoría */}
         <Dialog open={isAddingCategory} onOpenChange={setIsAddingCategory}>
           <DialogContent className="sm:max-w-[425px] rounded-xl border-2 border-[#BFD189] dark:border-gray-600 p-0 overflow-hidden">
-            <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 flex items-center justify-between">
+            <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 relative flex items-center justify-between">
               <DialogTitle className="text-lg font-semibold text-[#013612] dark:text-[#BFD189]">
                 Agregar Nueva Categoría
               </DialogTitle>
@@ -487,7 +497,7 @@ export default function ProductDetail({
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
                 aria-label="Cerrar"
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
@@ -511,14 +521,14 @@ export default function ProductDetail({
               <Button
                 variant="outline"
                 onClick={() => setIsAddingCategory(false)}
-                className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border"
+                className="border-[#EABD00] text-[#C79C00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border font-medium"
               >
                 Cancelar
               </Button>
               <Button
                 variant="outline"
                 onClick={handleAddCategory}
-                className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10 border"
+                className="border-[#2AA6CF] text-[#2AA6CF] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10 border font-medium"
               >
                 Agregar
               </Button>
@@ -529,7 +539,7 @@ export default function ProductDetail({
         {/* Dialog para editar categoría */}
         <Dialog open={isEditingCategory} onOpenChange={setIsEditingCategory}>
           <DialogContent className="sm:max-w-[425px] rounded-xl border-2 border-[#BFD189] dark:border-gray-600 p-0 overflow-hidden">
-            <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 flex items-center justify-between">
+            <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] py-4 px-6 relative flex items-center justify-between">
               <DialogTitle className="text-lg font-semibold text-[#013612] dark:text-[#BFD189]">
                 Editar Categoría
               </DialogTitle>
@@ -538,7 +548,7 @@ export default function ProductDetail({
                 className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
                 aria-label="Cerrar"
               >
-                <X size={18} />
+                <X size={20} />
               </button>
             </div>
 
@@ -567,14 +577,14 @@ export default function ProductDetail({
               <Button
                 variant="outline"
                 onClick={() => setIsEditingCategory(false)}
-                className="border-[#EABD00] text-[#EABD00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border"
+                className="border-[#EABD00] text-[#C79C00] hover:bg-[#EABD00]/10 dark:border-[#EABD00] dark:text-[#EABD00] dark:hover:bg-[#EABD00]/10 border font-medium"
               >
                 Cancelar
               </Button>
               <Button
                 variant="outline"
                 onClick={handleEditCategory}
-                className="border-[#52C1E4] text-[#52C1E4] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10 border"
+                className="border-[#2AA6CF] text-[#2AA6CF] hover:bg-[#52C1E4]/10 dark:border-[#52C1E4] dark:text-[#52C1E4] dark:hover:bg-[#52C1E4]/10 border font-medium"
               >
                 Guardar
               </Button>
