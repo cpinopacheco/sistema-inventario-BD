@@ -84,7 +84,7 @@ export default function StatsCards({ stats }: StatsCardsProps) {
         </motion.div>
       </div>
 
-      <div className="bg-card rounded-lg shadow-md p-6">
+      <div className="bg-card rounded-lg shadow-md p-6 dark:shadow-md dark:shadow-black/30 dark:border dark:border-gray-700">
         <h3 className="text-lg font-medium mb-4">Productos por Categoría</h3>
         <div className="space-y-4">
           {stats.porCategoria &&
