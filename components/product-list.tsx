@@ -123,12 +123,12 @@ export default function ProductList({
                     #
                   </TableHead>
                   <TableHead
-                    className="cursor-pointer hover:bg-muted dark:border-gray-600"
+                    className="w-[350px] cursor-pointer hover:bg-muted dark:border-gray-600"
                     onClick={() => onRequestSort("nombre")}
                   >
                     Nombre {getSortIndicator("nombre")}
                   </TableHead>
-                  <TableHead className="dark:border-gray-600">
+                  <TableHead className="w-[450px] dark:border-gray-600">
                     Descripción
                   </TableHead>
                   <TableHead
@@ -198,7 +198,7 @@ export default function ProductList({
                             {product.nombre}
                           </div>
                         </TableCell>
-                        <TableCell className="max-w-[200px] truncate dark:border-gray-600">
+                        <TableCell className="max-w-[450px] truncate dark:border-gray-600">
                           <TooltipSimple
                             text={product.descripcion || "Sin descripción"}
                           >

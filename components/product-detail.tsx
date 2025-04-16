@@ -65,6 +65,18 @@ export default function ProductDetail({
     category: product.categoria,
   });
 
+  // Actualizar el estado editedProduct cuando cambia el producto seleccionado
+  useEffect(() => {
+    setEditedProduct({
+      id: product.id,
+      name: product.nombre,
+      quantity: product.cantidad,
+      description: product.descripcion || "",
+      categoria_id: product.categoria_id,
+      category: product.categoria,
+    });
+  }, [product]);
+
   // New category state
   const [isAddingCategory, setIsAddingCategory] = useState(false);
   const [newCategory, setNewCategory] = useState("");
