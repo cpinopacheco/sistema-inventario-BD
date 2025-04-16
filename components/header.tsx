@@ -18,6 +18,7 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
   const { theme, setTheme } = useTheme();
   const isMobile = useMobile();
 
+  // Modificar el botón de tema para mejorar el contraste
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
@@ -41,9 +42,7 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
                   variant="ghost"
                   size="icon"
                   onClick={toggleTheme}
-                  className={`text-white hover:bg-[#01471a] dark:hover:bg-[#012b10] ${
-                    theme === "dark" ? "bg-[#012b10]/60" : "bg-[#01471a]/60"
-                  }`}
+                  className={`bg-[#EABD00] hover:bg-[#d9ae00] text-[#013612] dark:bg-[#EABD00] dark:hover:bg-[#d9ae00] dark:text-[#013612]`}
                 >
                   {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
                 </Button>
@@ -93,9 +92,7 @@ export function Header({ title, subtitle, logoUrl }: HeaderProps) {
                 variant="ghost"
                 size="icon"
                 onClick={toggleTheme}
-                className={`text-white hover:bg-[#01471a] dark:hover:bg-[#012b10] ${
-                  theme === "dark" ? "bg-[#012b10]/60" : "bg-[#01471a]/60"
-                }`}
+                className={`bg-[#EABD00] hover:bg-[#d9ae00] text-[#013612] dark:bg-[#EABD00] dark:hover:bg-[#d9ae00] dark:text-[#013612]`}
               >
                 {theme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
               </Button>
