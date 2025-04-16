@@ -623,18 +623,46 @@ export default function InventorySystem() {
 
                     {/* Tabla normal sin contenedor con scroll */}
                     <ProductList
-                      products={lowStockProducts.filter(
-                        (product) =>
-                          product.nombre
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase()) ||
-                          product.id
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase()) ||
-                          product.categoria
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase())
-                      )}
+                      products={useMemo(() => {
+                        // Primero filtramos los productos con stock bajo según el término de búsqueda
+                        const filteredProducts = lowStockProducts.filter(
+                          (product) =>
+                            product.nombre
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            product.id
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase()) ||
+                            product.categoria
+                              .toLowerCase()
+                              .includes(searchTerm.toLowerCase())
+                        );
+
+                        // Luego aplicamos el ordenamiento igual que en la otra pestaña
+                        if (sortConfig.key) {
+                          return [...filteredProducts].sort((a, b) => {
+                            const keyA =
+                              a[sortConfig.key as keyof ProductoConCategoria];
+                            const keyB =
+                              b[sortConfig.key as keyof ProductoConCategoria];
+
+                            if (keyA && keyB) {
+                              if (keyA < keyB) {
+                                return sortConfig.direction === "ascending"
+                                  ? -1
+                                  : 1;
+                              }
+                              if (keyA > keyB) {
+                                return sortConfig.direction === "ascending"
+                                  ? 1
+                                  : -1;
+                              }
+                            }
+                            return 0;
+                          });
+                        }
+                        return filteredProducts;
+                      }, [lowStockProducts, searchTerm, sortConfig])}
                       onSelectProduct={handleSelectProduct}
                       selectedProductId={selectedProduct?.id}
                       onUpdateQuantity={handleUpdateQuantity}

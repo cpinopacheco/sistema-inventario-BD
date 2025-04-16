@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       WHERE 1=1
     `;
 
-    const params: any[] = [];
+    const params: (string | number)[] = [];
     let paramIndex = 1;
 
     if (categoria) {

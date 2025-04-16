@@ -301,7 +301,7 @@ export default function ProductDetail({
                         >
                           <div className="flex items-center gap-1 group-hover:text-black">
                             <Edit2 size={14} />
-                            <span>Editar "{product.categoria}"</span>
+                            <span>Editar &quot;{product.categoria}&quot;</span>
                           </div>
                         </SelectItem>
                       )}

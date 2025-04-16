@@ -6,7 +6,7 @@ export async function GET() {
   try {
     // Verificar conexión a la base de datos primero
     try {
-      const testConnection = await query("SELECT 1");
+      await query("SELECT 1");
       console.log("Conexión a la base de datos verificada");
     } catch (dbError) {
       console.error("Error de conexión a la base de datos:", dbError);

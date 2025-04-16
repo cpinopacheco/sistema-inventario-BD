@@ -33,11 +33,11 @@ export async function PATCH(
     const cantidadActual = currentResult.rows[0].cantidad;
     const nuevaCantidad = Math.max(0, cantidadActual + cambio);
 
-    const result = await query(
+    // Actualizar la cantidad del producto
+    await query(
       `UPDATE productos 
        SET cantidad = $1
-       WHERE id = $2
-       RETURNING *`,
+       WHERE id = $2`,
       [nuevaCantidad, id]
     );
 

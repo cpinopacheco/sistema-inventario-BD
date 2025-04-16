@@ -2,8 +2,16 @@
  * Utilidad para exportar datos a Excel
  */
 
-// Función para exportar datos a Excel
-export function exportToExcel(data: any[], fileName = "export") {
+// Especificar un tipo más específico en lugar de 'any' en la línea 6
+// Reemplazar:
+// export function exportToExcel(data: any[], fileName = "export") {
+
+// Por:
+export interface ExcelData {
+  [key: string]: string | number | boolean | null | undefined;
+}
+
+export function exportToExcel(data: ExcelData[], fileName = "export") {
   // Verificar que hay datos para exportar
   if (!data || data.length === 0) {
     console.error("No hay datos para exportar");
