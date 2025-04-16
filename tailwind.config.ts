@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
@@ -45,10 +45,19 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      fontSize: {
+        base: "16px", // Establecer el tamaño base a 16px
+        xs: "14px",
+        sm: "16px", // Aumentar de 14px a 16px
+        md: "18px",
+        lg: "20px",
+        xl: "24px",
+        "2xl": "28px",
+        "3xl": "32px",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
-
+export default config;

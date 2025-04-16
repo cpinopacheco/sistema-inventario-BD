@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -87,10 +87,17 @@ export function ConfirmDialog({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] border border-[#BFD189] dark:border-gray-700 p-0 overflow-hidden">
-        <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] pb-2 px-6 pt-4">
+        <div className="bg-[#f5f9e8] dark:bg-[#1a2e22] pb-2 px-6 pt-4 relative flex items-center justify-between">
           <DialogTitle className="text-[#013612] dark:text-[#BFD189] text-lg">
             {title}
           </DialogTitle>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none"
+            aria-label="Cerrar"
+          >
+            <X size={20} />
+          </button>
         </div>
 
         <div className="p-6">
